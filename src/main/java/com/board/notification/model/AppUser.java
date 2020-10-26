@@ -2,11 +2,7 @@ package com.board.notification.model;
 
 import java.util.Date;
 
-import org.springframework.data.annotation.Id;
-
-public class Users {
-
-	@Id
+public class AppUser {
 	private Integer userId;
 	private String userName;
 	private String password;
@@ -17,35 +13,11 @@ public class Users {
 	private Date createdDate;
 	private Integer updatedBy;
 	private Date updatedDate;
+	private Role role;
 	private Boolean isActive;
 
-	public Users() {
-	}
-
-	public Users(Integer userId, String userName, String password, String email, String contactNumber) {
-		this.userId = userId;
-		this.userName = userName;
-		this.password = password;
-		this.email = email;
-		this.contactNumber = contactNumber;
-	}
-
-	public Users(Integer userId, String userName, String password, String email, String contactNumber,
-			Integer createdBy, Date createdDate, Integer updatedBy, Date updatedDate, Boolean isActive) {
-		this.userId = userId;
-		this.userName = userName;
-		this.password = password;
-		this.email = email;
-		this.contactNumber = contactNumber;
-		this.createdBy = createdBy;
-		this.createdDate = createdDate;
-		this.updatedBy = updatedBy;
-		this.updatedDate = updatedDate;
-		this.isActive = isActive;
-	}
-
 	public Integer getUserId() {
-		return this.userId;
+		return userId;
 	}
 
 	public void setUserId(Integer userId) {
@@ -53,7 +25,7 @@ public class Users {
 	}
 
 	public String getUserName() {
-		return this.userName;
+		return userName;
 	}
 
 	public void setUserName(String userName) {
@@ -61,7 +33,7 @@ public class Users {
 	}
 
 	public String getPassword() {
-		return this.password;
+		return password;
 	}
 
 	public void setPassword(String password) {
@@ -69,7 +41,7 @@ public class Users {
 	}
 
 	public String getEmail() {
-		return this.email;
+		return email;
 	}
 
 	public void setEmail(String email) {
@@ -77,7 +49,7 @@ public class Users {
 	}
 
 	public String getContactNumber() {
-		return this.contactNumber;
+		return contactNumber;
 	}
 
 	public void setContactNumber(String contactNumber) {
@@ -85,7 +57,7 @@ public class Users {
 	}
 
 	public Integer getCreatedBy() {
-		return this.createdBy;
+		return createdBy;
 	}
 
 	public void setCreatedBy(Integer createdBy) {
@@ -93,7 +65,7 @@ public class Users {
 	}
 
 	public Date getCreatedDate() {
-		return this.createdDate;
+		return createdDate;
 	}
 
 	public void setCreatedDate(Date createdDate) {
@@ -101,7 +73,7 @@ public class Users {
 	}
 
 	public Integer getUpdatedBy() {
-		return this.updatedBy;
+		return updatedBy;
 	}
 
 	public void setUpdatedBy(Integer updatedBy) {
@@ -109,15 +81,23 @@ public class Users {
 	}
 
 	public Date getUpdatedDate() {
-		return this.updatedDate;
+		return updatedDate;
 	}
 
 	public void setUpdatedDate(Date updatedDate) {
 		this.updatedDate = updatedDate;
 	}
 
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
 	public Boolean getIsActive() {
-		return this.isActive;
+		return isActive;
 	}
 
 	public void setIsActive(Boolean isActive) {

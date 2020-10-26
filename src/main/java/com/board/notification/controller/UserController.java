@@ -1,5 +1,7 @@
 package com.board.notification.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.board.notification.model.AppUser;
 import com.board.notification.model.Users;
 import com.board.notification.service.UserService;
 
@@ -23,14 +26,19 @@ public class UserController {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public Users createTodo(@RequestBody Users user) {
-        return userService.createUpdateUser(user);
+    public AppUser createAppUser(@RequestBody AppUser appUser) {
+        return userService.createOrUpdateUser(appUser);
     }
 
     
     @GetMapping("/{email}")
     public Users getUserByEmail(@PathVariable(name="email") String email) {
         return userService.getUserByEmail(email);
+    }
+    
+    @GetMapping("/")
+    public List<AppUser> getAllAppUsers() {
+    	return userService.getAllAppUsers();
     }
    
 }

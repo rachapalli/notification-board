@@ -1,9 +1,14 @@
 package com.board.notification.service;
 
+import java.util.List;
+
+import com.board.notification.model.AppUser;
 import com.board.notification.model.Users;
 
 public interface UserService {
-	Users createUpdateUser(Users user);
+	AppUser createOrUpdateUser(AppUser appUser);
 
 	Users getUserByEmail(String email);
+
+	List<AppUser> getAllAppUsers();
 }

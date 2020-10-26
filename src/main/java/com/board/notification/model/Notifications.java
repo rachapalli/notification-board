@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 
 public class Notifications {
 
-	private int notificationId;
+	private Integer notificationId;
 	private String message;
 	private String notificationType;
 	private Integer fileId;
@@ -18,11 +18,11 @@ public class Notifications {
 
 
 	@Id
-	public int getNotificationId() {
+	public Integer getNotificationId() {
 		return this.notificationId;
 	}
 
-	public void setNotificationId(int notificationId) {
+	public void setNotificationId(Integer notificationId) {
 		this.notificationId = notificationId;
 	}
 

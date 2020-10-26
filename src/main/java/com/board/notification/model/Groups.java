@@ -5,7 +5,7 @@ import java.util.Date;
 import org.springframework.data.annotation.Id;
 
 public class Groups {
-	private int groupId;
+	private Integer groupId;
 	private String groupName;
 	private Boolean isPublic;
 	private Integer createdBy;
@@ -15,12 +15,12 @@ public class Groups {
 	public Groups() {
 	}
 
-	public Groups(int groupId, String groupName) {
+	public Groups(Integer groupId, String groupName) {
 		this.groupId = groupId;
 		this.groupName = groupName;
 	}
 
-	public Groups(int groupId, String groupName, Boolean isPublic, Integer createdBy, Date createdDate,
+	public Groups(Integer groupId, String groupName, Boolean isPublic, Integer createdBy, Date createdDate,
 			Boolean isActive) {
 		this.groupId = groupId;
 		this.createdBy = createdBy;
@@ -31,11 +31,11 @@ public class Groups {
 	}
 
 	@Id
-	public int getGroupId() {
+	public Integer getGroupId() {
 		return this.groupId;
 	}
 
-	public void setGroupId(int groupId) {
+	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
 	}
 
