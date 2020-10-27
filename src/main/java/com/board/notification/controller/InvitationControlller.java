@@ -6,17 +6,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.board.notification.model.Invitation;
-import com.board.notification.model.Invitations;
-import com.board.notification.model.Notifications;
+import com.board.notification.model.StatusEnum;
+import com.board.notification.service.EmailService;
 import com.board.notification.service.InvitationService;
-import com.board.notification.service.NotificationService;
 
 @RestController
 @RequestMapping("/invitation/")
@@ -25,6 +23,9 @@ public class InvitationControlller {
 
 	@Autowired
 	private InvitationService invitationService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@GetMapping("/")
 	public List<Invitation> getAllInvitations() {
@@ -32,7 +33,9 @@ public class InvitationControlller {
 	}
 
 	@PostMapping("/")
-	public Invitation sendInvitation(Invitation invitation) {
+	public Invitation sendInvitation(@RequestBody Invitation invitation) {
+		StatusEnum emailStatus = emailService.sendEmail(invitation);
+		invitation.setStatus(emailStatus.status());
 		return invitationService.saveInvitation(invitation);
 	}
 

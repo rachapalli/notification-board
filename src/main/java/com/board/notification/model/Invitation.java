@@ -6,6 +6,7 @@ public class Invitation {
 	private String inviteeName;
 	private String email;
 	private String contactNumber;
+	private String subject;
 	private String message;
 	private String status;
 	private Integer createdBy;
@@ -65,6 +66,14 @@ public class Invitation {
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 }

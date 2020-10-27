@@ -33,6 +33,7 @@ public class InvitationServiceImpl implements InvitationService {
 		Invitations invitations = new Invitations();
 		invitations.setMessage(invitation.getMessage());
 		invitations.setCreatedDate(invitation.getCreatedDate());
+		invitations.setCreatedBy(invitation.getCreatedBy());
 		Invitations savedInvitations = invitationsRepo.save(invitations);
 
 		Invitee invitee = new Invitee();

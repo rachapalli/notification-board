@@ -42,5 +42,9 @@ public class Invitations {
 	public Integer getCreatedBy() {
 		return createdBy;
 	}
+
+	public void setCreatedBy(Integer createdBy) {
+		this.createdBy = createdBy;
+	}
 	
 }
