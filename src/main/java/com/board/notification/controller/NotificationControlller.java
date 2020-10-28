@@ -1,5 +1,7 @@
 package com.board.notification.controller;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.board.notification.model.AuthenticationRequest;
 import com.board.notification.model.AuthenticationResponse;
+import com.board.notification.model.Notifications;
 import com.board.notification.service.NotificationService;
 import com.board.notification.service.impl.NotificationUserDetailsService;
 import com.board.notification.utils.TokenUtils;
@@ -31,19 +35,23 @@ public class NotificationControlller {
 
 	@Autowired
 	private NotificationUserDetailsService userDetailsService;
-	
+
 	@Autowired
 	private NotificationService notificationService;
 
-	@RequestMapping("/getNotifications")
-	public void getNotifications() {
-		logger.info("Testing Rest Service . . .");
-		notificationService.getNotifications();
+	@RequestMapping("/getNotifications/{groupName}")
+	public List<Notifications> getNotifications(@PathVariable(name = "groupName") String groupName) {
+		return notificationService.getGroupNotification(groupName);
+	}
+
+	@RequestMapping("/saveGroupNotification/{groupName}")
+	public Notifications saveGroupNotification(@PathVariable(name = "groupName") String groupName,
+			@RequestBody Notifications notification) {
+		return notificationService.saveTextGroupNotification(groupName, notification);
 	}
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-	public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest)
-			throws Exception {
+	public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
 		try {
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
