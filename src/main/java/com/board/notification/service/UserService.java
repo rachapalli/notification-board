@@ -11,4 +11,6 @@ public interface UserService {
 	Users getUserByEmail(String email);
 
 	List<AppUser> getAllAppUsers();
+	
+	boolean activateUser(String input);
 }
