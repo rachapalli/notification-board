@@ -20,10 +20,10 @@ import com.board.notification.utils.TokenUtils;
 
 @Component
 public class NotificationRequestFilter extends OncePerRequestFilter {
-	
+
 	@Autowired
 	private NotificationUserDetailsService userDetailsService;
-	
+
 	@Autowired
 	private TokenUtils tokenUtil;
 
@@ -31,7 +31,6 @@ public class NotificationRequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		final String authorizationHeader = request.getHeader("Authorization");
-
 		String username = null;
 		String jwt = null;
 
@@ -39,11 +38,8 @@ public class NotificationRequestFilter extends OncePerRequestFilter {
 			jwt = authorizationHeader.substring(7);
 			username = tokenUtil.extractUsername(jwt);
 		}
-
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
 			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
 			if (tokenUtil.validateToken(jwt, userDetails)) {
 
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
