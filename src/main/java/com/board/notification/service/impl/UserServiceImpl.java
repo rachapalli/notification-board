@@ -12,20 +12,28 @@ import org.springframework.transaction.annotation.Transactional;
 import com.board.notification.dao.RolesRepo;
 import com.board.notification.dao.UserRepo;
 import com.board.notification.exception.DataNotFoundException;
+import com.board.notification.model.ActiveStatusEnum;
 import com.board.notification.model.AppUser;
+import com.board.notification.model.Invitation;
 import com.board.notification.model.Role;
 import com.board.notification.model.Roles;
+import com.board.notification.model.StatusEnum;
 import com.board.notification.model.Users;
+import com.board.notification.service.EmailService;
 import com.board.notification.service.UserService;
+import com.board.notification.utils.NotificationUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
 
 	@Autowired
-	public UserRepo userRepo;
+	private UserRepo userRepo;
 
 	@Autowired
-	public RolesRepo rolesRepo;
+	private RolesRepo rolesRepo;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@Transactional
 	@Override
@@ -46,9 +54,11 @@ public class UserServiceImpl implements UserService {
 
 			Optional<Roles> userRole = rolesRepo.findById(appUser.getRole().getRoleId());
 			if (userRole.isPresent()) {
+				user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
 				Users savedUser = userRepo.save(user);
 				userRepo.saveUserRole(savedUser.getUserId(), appUser.getRole().getRoleId(), appUser.getCreatedBy());
 				appUser.setUserId(savedUser.getUserId());
+				sendActivationEmail(appUser);
 			} else {
 				new DataNotFoundException("Role not found");
 			}
@@ -79,6 +89,38 @@ public class UserServiceImpl implements UserService {
 			allUsers.add(appUser);
 		}
 		return allUsers;
+	}
+
+	@Transactional
+	@Override
+	public boolean activateUser(String input) {
+		boolean status = false;
+		if (input != null && !input.isEmpty()) {
+			String userId = NotificationUtils.decodeString(input);
+			Users user = userRepo.findByEmail(userId);
+			if (user != null) {
+				user.setIsActive(ActiveStatusEnum.ACTIVE.statusFlag());
+				userRepo.save(user);
+				status = true;
+			}
+		}
+		return status;
+	}
+
+	private boolean sendActivationEmail(AppUser user) {
+		boolean status = false;
+		StringBuilder message = new StringBuilder();
+		message.append("Welcome ").append(user.getUserName()).append("\n\n")
+				.append("Please click on below link to activate").append("\n\n")
+				.append("http://127.0.0.1:8080/user/activate?key=")
+				.append(NotificationUtils.encodeString(user.getEmail()));
+		Invitation invitation = new Invitation();
+		invitation.setEmail(user.getEmail());
+		invitation.setMessage(message.toString());
+		invitation.setSubject("Finish setting up your new Account");
+		StatusEnum statusEnum = emailService.sendEmail(invitation);
+		status = StatusEnum.SUCCESS.equals(statusEnum);
+		return status;
 	}
 
 }
