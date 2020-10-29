@@ -1,5 +1,9 @@
 package com.board.notification.controller;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,13 +25,24 @@ public class GroupController {
 
 	@PostMapping("/")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Groups createTodo(@RequestBody Groups groups) {
+	public Groups createGroup(@RequestBody Groups groups) {
 		return groupService.createOrUpdateGroup(groups);
 	}
 
 	@GetMapping("/")
 	public Iterable<Groups> getAllGroups() {
 		return groupService.getAllGroups();
+	}
+
+	@PostMapping("/user/")
+	public List<Groups> getUserGroups(@RequestBody Map<String, String> userInput) {
+		if (userInput != null && !userInput.isEmpty()) {
+			String email = userInput.get("email");
+			if (email != null && !email.isEmpty()) {
+				return groupService.getUserGroups(email);
+			}
+		}
+		return Collections.emptyList();
 	}
 
 }

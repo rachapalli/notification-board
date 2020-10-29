@@ -48,4 +48,8 @@ public class UserController {
 				: NotificationConstants.USER_ACTIVATED_FAIL;
 	}
 
+	@GetMapping("/userTypes")
+	public List<String> getAllActiveUserTypes() {
+		return userService.getAllActiveUserTypes();
+	}
 }

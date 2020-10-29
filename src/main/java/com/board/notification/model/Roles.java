@@ -5,7 +5,7 @@ import java.util.Date;
 import org.springframework.data.annotation.Id;
 
 public class Roles {
-
+	@Id
 	private Integer roleId;
 	private String roleName;
 	private Integer createdBy;
@@ -22,8 +22,8 @@ public class Roles {
 		this.roleName = roleName;
 	}
 
-	public Roles(Integer roleId, String roleName, Integer createdBy, Date createdDate, Integer updatedBy, Date updatedDate,
-			Boolean isActive) {
+	public Roles(Integer roleId, String roleName, Integer createdBy, Date createdDate, Integer updatedBy,
+			Date updatedDate, Boolean isActive) {
 		this.roleId = roleId;
 		this.roleName = roleName;
 		this.createdBy = createdBy;
@@ -33,7 +33,6 @@ public class Roles {
 		this.isActive = isActive;
 	}
 
-	@Id
 	public Integer getRoleId() {
 		return this.roleId;
 	}

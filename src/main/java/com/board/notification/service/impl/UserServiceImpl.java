@@ -15,9 +15,9 @@ import com.board.notification.exception.DataNotFoundException;
 import com.board.notification.model.ActiveStatusEnum;
 import com.board.notification.model.AppUser;
 import com.board.notification.model.Invitation;
-import com.board.notification.model.Role;
 import com.board.notification.model.Roles;
 import com.board.notification.model.StatusEnum;
+import com.board.notification.model.UserTypeEnum;
 import com.board.notification.model.Users;
 import com.board.notification.service.EmailService;
 import com.board.notification.service.UserService;
@@ -39,10 +39,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public AppUser createOrUpdateUser(AppUser appUser) {
 		if (appUser.getUserId() != null) {
-			if (appUser.getRole() != null && appUser.getRole().getRoleId() != null) {
+			if (appUser.getUserType() != null) {
 				Integer userRoleId = userRepo.getUserRole(appUser.getUserId());
-				if (userRoleId != null && !userRoleId.equals(appUser.getRole().getRoleId())) {
-					userRepo.updateUserRole(appUser.getRole().getRoleId(), appUser.getUserId());
+				Roles userRole = rolesRepo.findByRoleName(appUser.getUserType().toString());
+				if (userRoleId != null && !userRoleId.equals(userRole.getRoleId())) {
+					userRepo.updateUserRole(userRole.getRoleId(), appUser.getUserId());
 				}
 				Users user = new Users();
 				BeanUtils.copyProperties(appUser, user);
@@ -51,12 +52,11 @@ public class UserServiceImpl implements UserService {
 		} else {
 			Users user = new Users();
 			BeanUtils.copyProperties(appUser, user);
-
-			Optional<Roles> userRole = rolesRepo.findById(appUser.getRole().getRoleId());
-			if (userRole.isPresent()) {
+			Roles userRole = rolesRepo.findByRoleName(appUser.getUserType().toString());
+			if (userRole != null) {
 				user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
 				Users savedUser = userRepo.save(user);
-				userRepo.saveUserRole(savedUser.getUserId(), appUser.getRole().getRoleId(), appUser.getCreatedBy());
+				userRepo.saveUserRole(savedUser.getUserId(), userRole.getRoleId(), appUser.getCreatedBy());
 				appUser.setUserId(savedUser.getUserId());
 				sendActivationEmail(appUser);
 			} else {
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
 				Optional<Roles> optRole = rolesRepo.findById(userRoleId);
 				if (optRole.isPresent()) {
 					Roles roles = optRole.get();
-					appUser.setRole(new Role(roles.getRoleId(), roles.getRoleName()));
+					appUser.setUserType(UserTypeEnum.decode( roles.getRoleName()));
 				}
 			}
 			allUsers.add(appUser);
@@ -121,6 +121,11 @@ public class UserServiceImpl implements UserService {
 		StatusEnum statusEnum = emailService.sendEmail(invitation);
 		status = StatusEnum.SUCCESS.equals(statusEnum);
 		return status;
+	}
+	
+	@Override
+	public List<String> getAllActiveUserTypes() {
+		return rolesRepo.getAllActiveRoles();
 	}
 
 }

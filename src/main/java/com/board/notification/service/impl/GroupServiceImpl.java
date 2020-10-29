@@ -1,5 +1,7 @@
 package com.board.notification.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +20,15 @@ public class GroupServiceImpl implements GroupService {
 	@Transactional
 	@Override
 	public Groups createOrUpdateGroup(Groups group) {
-		Groups createdGroup = groupRepo.save(group);
-		if (createdGroup != null) {
-			groupRepo.addGroupUser(group.getCreatedBy(), createdGroup.getGroupId(), group.getCreatedBy(),
-					ActiveStatusEnum.ACTIVE.status());
+		Groups createdGroup = null;
+		if (group.getGroupId() == null) {
+			createdGroup = groupRepo.save(group);
+			if (createdGroup != null) {
+				groupRepo.addGroupUser(group.getCreatedBy(), createdGroup.getGroupId(), group.getCreatedBy(),
+						ActiveStatusEnum.ACTIVE.status());
+			}
+		} else {
+			createdGroup = groupRepo.save(group);
 		}
 		return createdGroup;
 	}
@@ -29,6 +36,11 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public Iterable<Groups> getAllGroups() {
 		return groupRepo.findAll();
+	}
+	
+	@Override
+	public List<Groups> getUserGroups(String emailId) {
+		return groupRepo.getAllUserGroupsByEmail(emailId);
 	}
 
 }
