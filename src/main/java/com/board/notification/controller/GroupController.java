@@ -17,24 +17,24 @@ import com.board.notification.model.Groups;
 import com.board.notification.service.GroupService;
 
 @RestController
-@RequestMapping("/group/")
+@RequestMapping("/group")
 public class GroupController {
 
 	@Autowired
 	private GroupService groupService;
 
-	@PostMapping("/")
+	@PostMapping("/create")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Groups createGroup(@RequestBody Groups groups) {
 		return groupService.createOrUpdateGroup(groups);
 	}
 
-	@GetMapping("/")
+	@GetMapping("/getGroups")
 	public Iterable<Groups> getAllGroups() {
 		return groupService.getAllGroups();
 	}
 
-	@PostMapping("/user/")
+	@PostMapping("/getOwnerGroups")
 	public List<Groups> getUserGroups(@RequestBody Map<String, String> userInput) {
 		if (userInput != null && !userInput.isEmpty()) {
 			String email = userInput.get("email");
