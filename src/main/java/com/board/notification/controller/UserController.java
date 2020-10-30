@@ -67,6 +67,11 @@ public class UserController {
 				: NotificationConstants.USER_ACTIVATED_FAIL;
 	}
 
+	@GetMapping("/userTypes")
+	public List<String> getAllActiveUserTypes() {
+		return userService.getAllActiveUserTypes();
+	}
+
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 		try {

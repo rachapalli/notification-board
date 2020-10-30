@@ -13,4 +13,6 @@ public interface UserService {
 	List<AppUser> getAllAppUsers();
 	
 	boolean activateUser(String input);
+
+	List<String> getAllActiveUserTypes();
 }
