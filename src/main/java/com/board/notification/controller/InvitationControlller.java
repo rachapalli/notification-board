@@ -17,7 +17,7 @@ import com.board.notification.service.EmailService;
 import com.board.notification.service.InvitationService;
 
 @RestController
-@RequestMapping("/invitation/")
+@RequestMapping("/invitation")
 public class InvitationControlller {
 	private static final Logger logger = LogManager.getLogger(InvitationControlller.class);
 
@@ -27,12 +27,12 @@ public class InvitationControlller {
 	@Autowired
 	private EmailService emailService;
 
-	@GetMapping("/")
+	@GetMapping("/list")
 	public List<Invitation> getAllInvitations() {
 		return invitationService.getAllInvitations();
 	}
 
-	@PostMapping("/")
+	@PostMapping("/send")
 	public Invitation sendInvitation(@RequestBody Invitation invitation) {
 		StatusEnum emailStatus = emailService.sendEmail(invitation);
 		invitation.setStatus(emailStatus.status());

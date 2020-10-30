@@ -29,7 +29,7 @@ import com.board.notification.utils.NotificationConstants;
 import com.board.notification.utils.TokenUtils;
 
 @RestController
-@RequestMapping("/user/")
+@RequestMapping("/user")
 public class UserController {
 
 	@Autowired
@@ -44,7 +44,7 @@ public class UserController {
 	@Autowired
 	private NotificationUserDetailsService userDetailsService;
 
-	@PostMapping("/")
+	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
 	public AppUser createAppUser(@RequestBody AppUser appUser) {
 		return userService.createOrUpdateUser(appUser);
@@ -55,7 +55,7 @@ public class UserController {
 		return userService.getUserByEmail(email);
 	}
 
-	@GetMapping("/")
+	@GetMapping("/getUsers")
 	public List<AppUser> getAllAppUsers() {
 		return userService.getAllAppUsers();
 	}

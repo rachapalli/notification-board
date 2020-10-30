@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.board.notification.exception.InvalidRequestException;
@@ -22,6 +23,7 @@ import com.board.notification.service.NotificationService;
 import com.board.notification.service.UserService;
 
 @RestController
+@RequestMapping("/notification")
 public class NotificationControlller {
 	private static final Logger logger = LogManager.getLogger(NotificationControlller.class);
 
@@ -36,7 +38,7 @@ public class NotificationControlller {
 		return notificationService.getGroupNotification(groupName);
 	}
 
-	@PostMapping("/saveGroupNotification")
+	@PostMapping("/create")
 	public GroupNotification saveGroupNotification(@RequestBody GroupNotification groupNotification) {
 		return notificationService.saveTextGroupNotification(groupNotification);
 	}
