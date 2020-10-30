@@ -13,7 +13,7 @@ public class AppUser {
 	private Date createdDate;
 	private Integer updatedBy;
 	private Date updatedDate;
-	private Role role;
+	private UserTypeEnum userType;
 	private Boolean isActive;
 
 	public Integer getUserId() {
@@ -88,16 +88,16 @@ public class AppUser {
 		this.updatedDate = updatedDate;
 	}
 
-	public Role getRole() {
-		return role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
-
 	public Boolean getIsActive() {
 		return isActive;
+	}
+
+	public UserTypeEnum getUserType() {
+		return userType;
+	}
+
+	public void setUserType(UserTypeEnum userType) {
+		this.userType = userType;
 	}
 
 	public void setIsActive(Boolean isActive) {

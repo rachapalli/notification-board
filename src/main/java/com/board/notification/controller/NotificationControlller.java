@@ -1,6 +1,7 @@
 package com.board.notification.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,13 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.AuthenticationResponse;
+import com.board.notification.model.GroupNotification;
 import com.board.notification.model.Notifications;
+import com.board.notification.model.Users;
 import com.board.notification.service.NotificationService;
+import com.board.notification.service.UserService;
 
 @RestController
 public class NotificationControlller {
@@ -23,15 +28,17 @@ public class NotificationControlller {
 	@Autowired
 	private NotificationService notificationService;
 
-	@RequestMapping("/getNotifications/{groupName}")
+	@Autowired
+	private UserService userService;
+
+	@GetMapping("/getNotifications/{groupName}")
 	public List<Notifications> getNotifications(@PathVariable(name = "groupName") String groupName) {
 		return notificationService.getGroupNotification(groupName);
 	}
 
-	@RequestMapping("/saveGroupNotification/{groupName}")
-	public Notifications saveGroupNotification(@PathVariable(name = "groupName") String groupName,
-			@RequestBody Notifications notification) {
-		return notificationService.saveTextGroupNotification(groupName, notification);
+	@PostMapping("/saveGroupNotification")
+	public GroupNotification saveGroupNotification(@RequestBody GroupNotification groupNotification) {
+		return notificationService.saveTextGroupNotification(groupNotification);
 	}
 
 	@GetMapping("/test")
@@ -39,4 +46,13 @@ public class NotificationControlller {
 		return ResponseEntity.ok(new AuthenticationResponse(null, "Notification server is up and running"));
 	}
 
+	@PostMapping("/getUserGroupNotifications")
+	public List<GroupNotification> getUserGroupNotifications(@RequestBody Map<String, String> input) {
+		if (input != null && !input.isEmpty() && input.get("email") != null) {
+			Users user = userService.getUserByEmail(input.get("email"));
+			return notificationService.getUserGroupNotifications(user.getUserId());
+		} else {
+			throw new InvalidRequestException("Email is mandatory");
+		}
+	}
 }
