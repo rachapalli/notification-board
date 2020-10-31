@@ -1,6 +1,7 @@
 package com.board.notification.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
 			if (userRole != null) {
 				user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
 				Users savedUser = userRepo.save(user);
-				userRepo.saveUserRole(savedUser.getUserId(), userRole.getRoleId(), appUser.getCreatedBy());
+				userRepo.saveUserRole(savedUser.getUserId(), userRole.getRoleId(), appUser.getCreatedBy(), new Date());
 				appUser.setUserId(savedUser.getUserId());
 				sendActivationEmail(appUser);
 			} else {

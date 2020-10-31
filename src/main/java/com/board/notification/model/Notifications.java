@@ -16,7 +16,6 @@ public class Notifications {
 	public Notifications() {
 	}
 
-
 	@Id
 	public Integer getNotificationId() {
 		return this.notificationId;
@@ -58,11 +57,9 @@ public class Notifications {
 		this.createdDate = createdDate;
 	}
 
-
 	public Integer getCreatedBy() {
 		return createdBy;
 	}
-
 
 	public void setCreatedBy(Integer createdBy) {
 		this.createdBy = createdBy;

@@ -1,5 +1,6 @@
 package com.board.notification.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class GroupServiceImpl implements GroupService {
 			createdGroup = groupRepo.save(group);
 			if (createdGroup != null) {
 				groupRepo.addGroupUser(group.getCreatedBy(), createdGroup.getGroupId(), group.getCreatedBy(),
-						ActiveStatusEnum.ACTIVE.status());
+						new Date(), ActiveStatusEnum.ACTIVE.status());
 			}
 		} else {
 			createdGroup = groupRepo.save(group);
