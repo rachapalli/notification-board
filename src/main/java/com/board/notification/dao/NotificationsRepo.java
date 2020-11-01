@@ -1,5 +1,6 @@
 package com.board.notification.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
@@ -13,12 +14,12 @@ import com.board.notification.model.Notifications;
 public interface NotificationsRepo extends CrudRepository<Notifications, Long> {
 
 	@Query(value = "select n.* from group_notifications gn , notifications n where gn.notification_id = n.notification_id and gn.group_id=:groupId")
-	public List<Notifications> getGroupNotifications(@Param("groupId") Integer groupId);
+	public List<GroupNotification> getGroupNotifications(@Param("groupId") Integer groupId);
 
 	@Modifying
-	@Query(value = "insert into group_notifications(group_id, notification_id, created_by, created_date, is_active) values (:groupId, :notificationId, :createdBy, now(), 1);")
+	@Query(value = "insert into group_notifications(group_id, notification_id, created_by, created_date, is_active) values (:groupId, :notificationId, :createdBy, :createdDate, 1)")
 	public void saveGroupNotification(@Param("groupId") Integer groupId,
-			@Param("notificationId") Integer notificationId, @Param("createdBy") Integer createdBy);
+			@Param("notificationId") Integer notificationId, @Param("createdBy") Integer createdBy, @Param("createdDate") Date createdDate);
 	
 	
 	@Query(value = "select g.group_id, g.group_name, n.* from group_notifications gn, notifications n, groups g "

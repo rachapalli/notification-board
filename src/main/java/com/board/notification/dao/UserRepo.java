@@ -1,5 +1,7 @@
 package com.board.notification.dao;
 
+import java.util.Date;
+
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,9 +18,9 @@ public interface UserRepo extends CrudRepository<Users, Integer> {
 	public Integer getUserRole(@Param("userId") Integer userId);
 
 	@Modifying
-	@Query(value = "insert into user_roles (user_id, role_id, created_by, created_date, is_active) values (:userId, :roleId, :createdBy, now(), 1)")
+	@Query(value = "insert into user_roles (user_id, role_id, created_by, created_date, is_active) values (:userId, :roleId, :createdBy, :createdDate, 1)")
 	public Integer saveUserRole(@Param("userId") Integer userId, @Param("roleId") Integer roleId,
-			@Param("createdBy") Integer createdBy);
+			@Param("createdBy") Integer createdBy, @Param("createdDate") Date createdDate);
 
 	@Modifying
 	@Query(value = "update user_roles set role_id = :roleId where user_id=:userId")

@@ -34,7 +34,7 @@ public class NotificationControlller {
 	private UserService userService;
 
 	@GetMapping("/getNotifications/{groupName}")
-	public List<Notifications> getNotifications(@PathVariable(name = "groupName") String groupName) {
+	public List<GroupNotification> getNotifications(@PathVariable(name = "groupName") String groupName) {
 		return notificationService.getGroupNotification(groupName);
 	}
 
@@ -52,6 +52,9 @@ public class NotificationControlller {
 	public List<GroupNotification> getUserGroupNotifications(@RequestBody Map<String, String> input) {
 		if (input != null && !input.isEmpty() && input.get("email") != null) {
 			Users user = userService.getUserByEmail(input.get("email"));
+			if (user == null) {
+				throw new InvalidRequestException("User not found");
+			}
 			return notificationService.getUserGroupNotifications(user.getUserId());
 		} else {
 			throw new InvalidRequestException("Email is mandatory");

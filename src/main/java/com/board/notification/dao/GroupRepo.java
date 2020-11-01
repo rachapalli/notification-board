@@ -1,5 +1,6 @@
 package com.board.notification.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
@@ -14,9 +15,9 @@ public interface GroupRepo extends CrudRepository<Groups, Integer> {
 
 	@Modifying
 	@Query(value = "INSERT INTO user_groups(user_id, group_id, created_by,created_date,is_active) "
-			+ "values (:userId, :groupId, :createdBy, now(), :isActive)")
+			+ "values (:userId, :groupId, :createdBy, :createdDate, :isActive)")
 	public void addGroupUser(@Param("userId") Integer userId, @Param("groupId") Integer groupId,
-			@Param("createdBy") Integer createdBy, @Param("isActive") Integer isActive);
+			@Param("createdBy") Integer createdBy, @Param("createdDate") Date createdDate, @Param("isActive") Integer isActive);
 	
 	
 	@Query(value = "select g.* from user_groups ug, users u, groups g where ug.user_id=u.user_id and ug.group_id=g.group_id and u.email= :emailId")

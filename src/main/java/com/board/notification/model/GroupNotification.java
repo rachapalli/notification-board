@@ -11,6 +11,7 @@ public class GroupNotification {
 	private Integer fileId;
 	private Integer createdBy;
 	private Date createdDate;
+	private String fileKey;
 
 	public Integer getGroupId() {
 		return groupId;
@@ -74,6 +75,14 @@ public class GroupNotification {
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public String getFileKey() {
+		return fileKey;
+	}
+
+	public void setFileKey(String fileKey) {
+		this.fileKey = fileKey;
 	}
 
 }

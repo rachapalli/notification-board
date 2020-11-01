@@ -1,5 +1,6 @@
 package com.board.notification.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class InvitationServiceImpl implements InvitationService {
 		Invitee savdInvitee = inviteeRepo.save(invitee);
 
 		invitationsRepo.saveAllInvitattion(savedInvitations.getInvitationId(), savdInvitee.getInviteeId(),
-				invitation.getStatus(), invitation.getCreatedBy());
+				invitation.getStatus(), invitation.getCreatedBy(), new Date());
 
 		return invitation;
 	}

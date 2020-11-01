@@ -1,5 +1,6 @@
 package com.board.notification.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
@@ -17,7 +18,7 @@ public interface InvitationsRepo extends CrudRepository<Invitations, Integer> {
 
 	@Modifying
 	@Query(value = "insert into all_invitations (invitation_id, invitee_id, status, created_by, created_date) "
-			+ "values (:invitationId, :inviteeId, :status, :createdBy, now())")
+			+ "values (:invitationId, :inviteeId, :status, :createdBy, :createdDate)")
 	public void saveAllInvitattion(@Param("invitationId") Integer invitationId, @Param("inviteeId") Integer inviteeId,
-			@Param("status") String status, @Param("createdBy") Integer createdBy);
+			@Param("status") String status, @Param("createdBy") Integer createdBy, @Param("createdDate") Date createdDate);
 }
