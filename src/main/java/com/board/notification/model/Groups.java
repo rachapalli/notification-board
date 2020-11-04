@@ -2,11 +2,16 @@ package com.board.notification.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.annotation.Id;
 
 public class Groups {
 	private Integer groupId;
+	@NotBlank
 	private String groupName;
+	@NotNull
 	private Boolean isPublic;
 	private Integer createdBy;
 	private Date createdDate;

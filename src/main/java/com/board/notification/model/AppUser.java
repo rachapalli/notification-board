@@ -2,18 +2,27 @@ package com.board.notification.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class AppUser {
 	private Integer userId;
+
+	@NotBlank(message = "User Name is mandatory")
 	private String userName;
 	private String password;
+	@NotBlank
 	private String email;
 	private String alternateEmail;
+	@NotBlank
 	private String contactNumber;
 	private Integer createdBy;
 	private Date createdDate;
 	private Integer updatedBy;
 	private Date updatedDate;
+	@NotNull
 	private UserTypeEnum userType;
+	private Permission permissions;
 	private Boolean isActive;
 
 	public Integer getUserId() {
@@ -110,6 +119,14 @@ public class AppUser {
 
 	public void setAlternateEmail(String alternateEmail) {
 		this.alternateEmail = alternateEmail;
+	}
+
+	public Permission getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(Permission permissions) {
+		this.permissions = permissions;
 	}
 
 }

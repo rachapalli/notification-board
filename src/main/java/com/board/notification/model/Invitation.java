@@ -2,11 +2,17 @@ package com.board.notification.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotBlank;
+
 public class Invitation {
+	@NotBlank
 	private String inviteeName;
+	@NotBlank
 	private String email;
 	private String contactNumber;
+	@NotBlank
 	private String subject;
+	@NotBlank
 	private String message;
 	private String status;
 	private Integer createdBy;

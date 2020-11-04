@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,7 @@ public class GroupController {
 
 	@PostMapping("/create")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Groups createGroup(@RequestBody Groups groups) {
+	public Groups createGroup(@Valid @RequestBody Groups groups) {
 		return groupService.createOrUpdateGroup(groups);
 	}
 

@@ -2,10 +2,15 @@ package com.board.notification.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class GroupNotification {
+	@NotNull
 	private Integer groupId;
 	private String groupName;
 	private Integer notificationId;
+	@NotBlank
 	private String message;
 	private String notificationType;
 	private Integer fileId;

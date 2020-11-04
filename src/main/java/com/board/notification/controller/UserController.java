@@ -2,6 +2,8 @@ package com.board.notification.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.board.notification.model.AppUser;
 import com.board.notification.model.AuthenticationRequest;
 import com.board.notification.model.AuthenticationResponse;
-import com.board.notification.model.Users;
 import com.board.notification.service.UserService;
 import com.board.notification.service.impl.NotificationUserDetailsService;
 import com.board.notification.utils.NotificationConstants;
@@ -46,12 +47,12 @@ public class UserController {
 
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
-	public AppUser createAppUser(@RequestBody AppUser appUser) {
+	public AppUser createAppUser(@Valid @RequestBody AppUser appUser) {
 		return userService.createOrUpdateUser(appUser);
 	}
 
 	@GetMapping("/{email}")
-	public Users getUserByEmail(@PathVariable(name = "email") String email) {
+	public AppUser getUserByEmail(@PathVariable(name = "email") String email) {
 		return userService.getUserByEmail(email);
 	}
 

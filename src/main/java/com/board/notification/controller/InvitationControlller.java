@@ -2,6 +2,8 @@ package com.board.notification.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class InvitationControlller {
 	}
 
 	@PostMapping("/send")
-	public Invitation sendInvitation(@RequestBody Invitation invitation) {
+	public Invitation sendInvitation(@Valid @RequestBody Invitation invitation) {
 		StatusEnum emailStatus = emailService.sendEmail(invitation);
 		invitation.setStatus(emailStatus.status());
 		return invitationService.saveInvitation(invitation);
