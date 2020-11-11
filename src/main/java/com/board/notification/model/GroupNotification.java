@@ -2,12 +2,16 @@ package com.board.notification.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class GroupNotification {
+	@NotNull
 	private Integer groupId;
 	private String groupName;
 	private Integer notificationId;
+	@NotBlank
 	private String message;
-	private String notificationType;
 	private Integer fileId;
 	private Integer createdBy;
 	private Date createdDate;
@@ -43,14 +47,6 @@ public class GroupNotification {
 
 	public void setMessage(String message) {
 		this.message = message;
-	}
-
-	public String getNotificationType() {
-		return notificationType;
-	}
-
-	public void setNotificationType(String notificationType) {
-		this.notificationType = notificationType;
 	}
 
 	public Integer getFileId() {

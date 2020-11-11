@@ -3,6 +3,8 @@ package com.board.notification.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.board.notification.exception.InvalidRequestException;
+import com.board.notification.model.AppUser;
 import com.board.notification.model.AuthenticationResponse;
 import com.board.notification.model.GroupNotification;
-import com.board.notification.model.Notifications;
-import com.board.notification.model.Users;
 import com.board.notification.service.NotificationService;
 import com.board.notification.service.UserService;
 
@@ -39,8 +40,8 @@ public class NotificationControlller {
 	}
 
 	@PostMapping("/create")
-	public GroupNotification saveGroupNotification(@RequestBody GroupNotification groupNotification) {
-		return notificationService.saveTextGroupNotification(groupNotification);
+	public GroupNotification saveGroupNotification(@Valid @RequestBody GroupNotification groupNotification) {
+		return notificationService.saveGroupNotification(groupNotification);
 	}
 
 	@GetMapping("/test")
@@ -51,7 +52,7 @@ public class NotificationControlller {
 	@PostMapping("/getUserGroupNotifications")
 	public List<GroupNotification> getUserGroupNotifications(@RequestBody Map<String, String> input) {
 		if (input != null && !input.isEmpty() && input.get("email") != null) {
-			Users user = userService.getUserByEmail(input.get("email"));
+			AppUser user = userService.getUserByEmail(input.get("email"));
 			if (user == null) {
 				throw new InvalidRequestException("User not found");
 			}

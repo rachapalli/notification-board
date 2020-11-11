@@ -8,7 +8,6 @@ public class Notifications {
 
 	private Integer notificationId;
 	private String message;
-	private String notificationType;
 	private Integer fileId;
 	private Integer createdBy;
 	private Date createdDate;
@@ -31,14 +30,6 @@ public class Notifications {
 
 	public void setMessage(String message) {
 		this.message = message;
-	}
-
-	public String getNotificationType() {
-		return this.notificationType;
-	}
-
-	public void setNotificationType(String notificationType) {
-		this.notificationType = notificationType;
 	}
 
 	public Integer getFileId() {

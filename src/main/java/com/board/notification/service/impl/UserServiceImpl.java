@@ -1,7 +1,6 @@
 package com.board.notification.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.board.notification.dao.PermissionRepo;
 import com.board.notification.dao.RolesRepo;
 import com.board.notification.dao.UserRepo;
 import com.board.notification.exception.DataNotFoundException;
 import com.board.notification.model.ActiveStatusEnum;
 import com.board.notification.model.AppUser;
 import com.board.notification.model.Invitation;
+import com.board.notification.model.Permission;
 import com.board.notification.model.Roles;
 import com.board.notification.model.StatusEnum;
 import com.board.notification.model.UserTypeEnum;
@@ -35,19 +36,19 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private PermissionRepo permissionRepo;
 
 	@Transactional
 	@Override
 	public AppUser createOrUpdateUser(AppUser appUser) {
 		if (appUser.getUserId() != null) {
 			if (appUser.getUserType() != null) {
-				Integer userRoleId = userRepo.getUserRole(appUser.getUserId());
-				Roles userRole = rolesRepo.findByRoleName(appUser.getUserType().toString());
-				if (userRoleId != null && !userRoleId.equals(userRole.getRoleId())) {
-					userRepo.updateUserRole(userRole.getRoleId(), appUser.getUserId());
-				}
+				Roles role = rolesRepo.findByRoleName(appUser.getUserType().toString());
 				Users user = new Users();
 				BeanUtils.copyProperties(appUser, user);
+				user.setRoleId(role.getRoleId());
 				userRepo.save(user);
 			}
 		} else {
@@ -56,8 +57,8 @@ public class UserServiceImpl implements UserService {
 			Roles userRole = rolesRepo.findByRoleName(appUser.getUserType().toString());
 			if (userRole != null) {
 				user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
+				user.setRoleId(userRole.getRoleId());
 				Users savedUser = userRepo.save(user);
-				userRepo.saveUserRole(savedUser.getUserId(), userRole.getRoleId(), appUser.getCreatedBy(), new Date());
 				appUser.setUserId(savedUser.getUserId());
 				sendActivationEmail(appUser);
 			} else {
@@ -68,8 +69,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Users getUserByEmail(String email) {
-		return userRepo.findByEmail(email);
+	public AppUser getUserByEmail(String email) {
+		Users user = userRepo.findByEmail(email);
+		AppUser appUser = null;
+		if (user != null) {
+			appUser = new AppUser();
+			BeanUtils.copyProperties(user, appUser);
+			Optional<Roles> optRole = rolesRepo.findById(user.getRoleId());
+			if (optRole.isPresent()) {
+				appUser.setUserType(UserTypeEnum.decode(optRole.get().getRoleName()));
+				appUser.setPermissions(getRolePermission(user.getRoleId()));
+			}
+		} else {
+			throw new DataNotFoundException("User not found.");
+		}
+		return appUser;
 	}
 
 	@Override
@@ -79,12 +93,11 @@ public class UserServiceImpl implements UserService {
 		for (Users user : users) {
 			AppUser appUser = new AppUser();
 			BeanUtils.copyProperties(user, appUser);
-			Integer userRoleId = userRepo.getUserRole(user.getUserId());
-			if (userRoleId != null) {
-				Optional<Roles> optRole = rolesRepo.findById(userRoleId);
+			if (user.getRoleId() != null) {
+				Optional<Roles> optRole = rolesRepo.findById(user.getRoleId());
 				if (optRole.isPresent()) {
-					Roles roles = optRole.get();
-					appUser.setUserType(UserTypeEnum.decode( roles.getRoleName()));
+					appUser.setUserType(UserTypeEnum.decode(optRole.get().getRoleName()));
+					appUser.setPermissions(getRolePermission(user.getRoleId()));
 				}
 			}
 			allUsers.add(appUser);
@@ -127,6 +140,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<String> getAllActiveUserTypes() {
 		return rolesRepo.getAllActiveRoles();
+	}
+	
+	@Override
+	public Permission getRolePermission(Integer roleId) {
+		return permissionRepo.findByRoleId(roleId);
 	}
 
 }

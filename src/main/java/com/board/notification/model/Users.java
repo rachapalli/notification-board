@@ -18,6 +18,7 @@ public class Users {
 	private Integer updatedBy;
 	private Date updatedDate;
 	private Boolean isActive;
+	private Integer roleId;
 
 	public Users() {
 	}
@@ -130,6 +131,14 @@ public class Users {
 
 	public void setAlternateEmail(String alternateEmail) {
 		this.alternateEmail = alternateEmail;
+	}
+
+	public Integer getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
 	}
 
 }

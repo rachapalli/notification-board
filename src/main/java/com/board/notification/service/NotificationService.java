@@ -8,7 +8,7 @@ public interface NotificationService {
 	
 	List<GroupNotification> getGroupNotification(String groupName);
 	
-	GroupNotification saveTextGroupNotification(GroupNotification groupNotification);
+	GroupNotification saveGroupNotification(GroupNotification groupNotification);
 	
 	List<GroupNotification> getUserGroupNotifications(Integer userId);
 
