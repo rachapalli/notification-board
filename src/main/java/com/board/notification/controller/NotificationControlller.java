@@ -41,7 +41,7 @@ public class NotificationControlller {
 
 	@PostMapping("/create")
 	public GroupNotification saveGroupNotification(@Valid @RequestBody GroupNotification groupNotification) {
-		return notificationService.saveTextGroupNotification(groupNotification);
+		return notificationService.saveGroupNotification(groupNotification);
 	}
 
 	@GetMapping("/test")

@@ -12,7 +12,6 @@ public class GroupNotification {
 	private Integer notificationId;
 	@NotBlank
 	private String message;
-	private String notificationType;
 	private Integer fileId;
 	private Integer createdBy;
 	private Date createdDate;
@@ -48,14 +47,6 @@ public class GroupNotification {
 
 	public void setMessage(String message) {
 		this.message = message;
-	}
-
-	public String getNotificationType() {
-		return notificationType;
-	}
-
-	public void setNotificationType(String notificationType) {
-		this.notificationType = notificationType;
 	}
 
 	public Integer getFileId() {

@@ -57,7 +57,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Transactional
 	@Override
-	public GroupNotification saveTextGroupNotification(GroupNotification groupNotification) {
+	public GroupNotification saveGroupNotification(GroupNotification groupNotification) {
 		if (groupNotification.getGroupId() == null) {
 			throw new InvalidRequestException(NotificationConstants.REQUIRED_MSG + "groupName");
 		}
@@ -68,6 +68,9 @@ public class NotificationServiceImpl implements NotificationService {
 
 		Groups group = optGroup.get();
 		Notifications notifications = new Notifications();
+		if (groupNotification.getCreatedDate() == null) {
+			groupNotification.setCreatedDate(new Date());
+		}
 		BeanUtils.copyProperties(groupNotification, notifications);
 		Notifications savedNotification = notificationsRepo.save(notifications);
 		notificationsRepo.saveGroupNotification(group.getGroupId(), savedNotification.getNotificationId(),

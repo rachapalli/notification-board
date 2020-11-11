@@ -88,7 +88,6 @@ CREATE TABLE all_files(
 CREATE TABLE notifications(
     notification_id INT IDENTITY(1,1) PRIMARY KEY ,
 	message TEXT,
-	notification_type VARCHAR (10) NOT NULL,
 	file_id INT,
 	created_by INT FOREIGN KEY REFERENCES users(user_id),
     created_date DATETIME
