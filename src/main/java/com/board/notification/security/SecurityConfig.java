@@ -1,4 +1,4 @@
-package com.board.notification.config;
+package com.board.notification.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -19,7 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import com.board.notification.filter.NotificationRequestFilter;
+import com.board.notification.config.NotificationEntryPoint;
 import com.board.notification.service.impl.NotificationUserDetailsService;
 
 @Configuration
