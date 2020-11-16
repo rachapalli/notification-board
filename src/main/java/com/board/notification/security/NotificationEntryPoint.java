@@ -1,6 +1,7 @@
-package com.board.notification.config;
+package com.board.notification.security;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,7 +11,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NotificationEntryPoint implements AuthenticationEntryPoint {
+public class NotificationEntryPoint implements AuthenticationEntryPoint, Serializable {
+
+	private static final long serialVersionUID = -9034825795727075678L;
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,

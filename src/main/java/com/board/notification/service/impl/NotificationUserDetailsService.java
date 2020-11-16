@@ -1,19 +1,23 @@
 package com.board.notification.service.impl;
 
-import java.util.ArrayList;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.board.notification.LoggingAspect;
 import com.board.notification.model.AppUser;
+import com.board.notification.model.UserSecurityDetails;
 import com.board.notification.service.UserService;
 
 @Service
 public class NotificationUserDetailsService implements UserDetailsService {
+
+	private static final Logger LOGGER = LogManager.getLogger(LoggingAspect.class);
 
 	@Autowired
 	private UserService userServiceImpl;
@@ -21,8 +25,15 @@ public class NotificationUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		AppUser user = userServiceImpl.getUserByEmail(username);
-		if (null != user) {
-			return new User(user.getEmail(), user.getPassword(), new ArrayList<>());
+		if (user == null) {
+			throw new UsernameNotFoundException(String.format("No User found with username '%s'.", username));
+		} else {
+			try {
+				return new UserSecurityDetails(user.getUserId(), user.getEmail(), user.getPassword(), user.getEmail(), null,
+						AuthorityUtils.commaSeparatedStringToAuthorityList(user.getAuthorities()));
+			} catch (Exception e) {
+				LOGGER.error("Exception in getting user by username : ", e);
+			}
 		}
 		return null;
 	}
