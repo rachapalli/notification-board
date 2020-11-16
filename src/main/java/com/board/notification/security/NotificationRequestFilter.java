@@ -36,7 +36,7 @@ public class NotificationRequestFilter extends OncePerRequestFilter {
 
 		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 			jwt = authorizationHeader.substring(7);
-			username = tokenUtil.extractUsername(jwt);
+			username = tokenUtil.getUsernameFromToken(jwt);
 		}
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);

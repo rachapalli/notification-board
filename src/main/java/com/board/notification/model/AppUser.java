@@ -129,4 +129,9 @@ public class AppUser {
 		this.permissions = permissions;
 	}
 
+	public String getAuthorities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
