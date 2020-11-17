@@ -43,9 +43,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable().authorizeRequests().antMatchers("/user/authenticate").permitAll()
 				.antMatchers("/user/register").permitAll().antMatchers("/user/userTypes").permitAll()
-				.antMatchers("/notification/getNotifications/*").permitAll().anyRequest().authenticated().and()
-				.exceptionHandling().authenticationEntryPoint(notificationEntryPoint).and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.NEVER);
+				.antMatchers("/notification/getNotifications/*").permitAll().antMatchers("/file/download").permitAll()
+				.anyRequest().authenticated().and().exceptionHandling().authenticationEntryPoint(notificationEntryPoint)
+				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
 
 		httpSecurity.addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class);
 	}
