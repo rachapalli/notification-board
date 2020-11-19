@@ -30,7 +30,7 @@ public class AzureBlobAdapter {
 	}
 
 	public byte[] getFile(String name) throws IOException {
-		File temp = new File("/temp/" + name);
+		File temp = new File("/home/temp/" + name);
 		BlobProperties properties = client.blobName(name).buildClient().downloadToFile(temp.getPath());
 		byte[] content = Files.readAllBytes(Paths.get(temp.getPath()));
 		temp.delete();

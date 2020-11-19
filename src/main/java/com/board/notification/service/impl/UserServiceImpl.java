@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.board.notification.dao.PermissionRepo;
 import com.board.notification.dao.RolesRepo;
 import com.board.notification.dao.UserRepo;
+import com.board.notification.exception.AlreadyExistsException;
 import com.board.notification.exception.DataNotFoundException;
 import com.board.notification.model.ActiveStatusEnum;
 import com.board.notification.model.AppUser;
@@ -23,6 +24,7 @@ import com.board.notification.model.UserTypeEnum;
 import com.board.notification.model.Users;
 import com.board.notification.service.EmailService;
 import com.board.notification.service.UserService;
+import com.board.notification.utils.NotificationConstants;
 import com.board.notification.utils.NotificationUtils;
 
 @Service
@@ -42,18 +44,22 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public AppUser createOrUpdateUser(AppUser appUser) {
+	public AppUser createOrUpdateUser(AppUser appUser) throws AlreadyExistsException {
 		if (appUser.getUserId() != null) {
 			if (appUser.getUserType() != null) {
 				Roles role = rolesRepo.findByRoleName(appUser.getUserType().toString());
 				Users user = new Users();
+				user.setUpdatedDate(NotificationUtils.getUKTime());
 				BeanUtils.copyProperties(appUser, user);
 				user.setRoleId(role.getRoleId());
 				userRepo.save(user);
 			}
 		} else {
+			validateUser(appUser);
 			Users user = new Users();
 			BeanUtils.copyProperties(appUser, user);
+			user.setCreatedDate(NotificationUtils.getUKTime());
+			user.setUpdatedDate(NotificationUtils.getUKTime());
 			Roles userRole = rolesRepo.findByRoleName(appUser.getUserType().toString());
 			if (userRole != null) {
 				user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
@@ -66,6 +72,14 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		return appUser;
+	}
+	
+	private boolean validateUser(AppUser appUser) throws AlreadyExistsException {
+		Users user = userRepo.findByEmail(appUser.getEmail());
+		if (user != null) {
+			throw new AlreadyExistsException(NotificationConstants.MSG_EMAIL_EXISTS);
+		}
+		return false;
 	}
 
 	@Override

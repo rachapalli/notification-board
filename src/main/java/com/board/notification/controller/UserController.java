@@ -1,6 +1,7 @@
 package com.board.notification.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.board.notification.exception.AlreadyExistsException;
+import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.AppUser;
 import com.board.notification.model.AuthenticationRequest;
 import com.board.notification.model.AuthenticationResponse;
@@ -47,13 +50,21 @@ public class UserController {
 
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
-	public AppUser createAppUser(@Valid @RequestBody AppUser appUser) {
+	public AppUser createAppUser(@Valid @RequestBody AppUser appUser) throws AlreadyExistsException {
 		return userService.createOrUpdateUser(appUser);
 	}
 
 	@GetMapping("/{email}")
 	public AppUser getUserByEmail(@PathVariable(name = "email") String email) {
 		return userService.getUserByEmail(email);
+	}
+	
+	@PostMapping("/findUser")
+	public AppUser getUserByEmail(Map<String, String> requestMap) {
+		if (requestMap == null || requestMap.isEmpty() || requestMap.get(NotificationConstants.EMAIL) == null) {
+			throw new InvalidRequestException(NotificationConstants.REQUIRED_MSG + NotificationConstants.EMAIL);
+		}
+		return userService.getUserByEmail(requestMap.get(NotificationConstants.EMAIL));
 	}
 
 	@GetMapping("/getUsers")

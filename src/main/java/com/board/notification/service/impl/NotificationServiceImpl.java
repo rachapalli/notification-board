@@ -26,6 +26,7 @@ import com.board.notification.model.Groups;
 import com.board.notification.model.Notifications;
 import com.board.notification.service.NotificationService;
 import com.board.notification.utils.NotificationConstants;
+import com.board.notification.utils.NotificationUtils;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -69,12 +70,12 @@ public class NotificationServiceImpl implements NotificationService {
 		Groups group = optGroup.get();
 		Notifications notifications = new Notifications();
 		if (groupNotification.getCreatedDate() == null) {
-			groupNotification.setCreatedDate(new Date());
+			groupNotification.setCreatedDate(NotificationUtils.getUKTime());
 		}
 		BeanUtils.copyProperties(groupNotification, notifications);
 		Notifications savedNotification = notificationsRepo.save(notifications);
 		notificationsRepo.saveGroupNotification(group.getGroupId(), savedNotification.getNotificationId(),
-				groupNotification.getCreatedBy(), new Date());
+				groupNotification.getCreatedBy(), NotificationUtils.getUKTime());
 		groupNotification.setNotificationId(savedNotification.getNotificationId());
 		groupNotification.setGroupName(group.getGroupName());
 		return groupNotification;

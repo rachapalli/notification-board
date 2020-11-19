@@ -2,7 +2,6 @@ package com.board.notification.model;
 
 import java.util.Date;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -10,7 +9,6 @@ public class AppUser {
 	private Integer userId;
 
 	@NotBlank(message = "Name is mandatory")
-	@Min(value = 3, message = "Name minimum length is 3")
 	private String userName;
 	@NotBlank(message = "Password is mandatory")
 	private String password;

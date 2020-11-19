@@ -1,7 +1,6 @@
 package com.board.notification.controller;
 
 import java.io.IOException;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -15,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.board.notification.dao.AllFilesRepo;
 import com.board.notification.model.AllFiles;
 import com.board.notification.service.AzureBlobAdapter;
+import com.board.notification.service.FileService;
+import com.board.notification.utils.NotificationUtils;
 
 @RestController
 @RequestMapping("/file")
@@ -27,12 +27,12 @@ public class AzureBlobFileController {
 	private AzureBlobAdapter azureAdapter;
 
 	@Autowired
-	private AllFilesRepo allFilesRepo;
+	private FileService fileService;
 
 	@PostMapping(path = "/upload", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public AllFiles uploadFile(@RequestPart(value = "file", required = true) MultipartFile file) throws IOException {
 		String fileKey = azureAdapter.upload(file, "prefix");
-		AllFiles uploadedFile = allFilesRepo.save(new AllFiles(file.getName(), fileKey, null, new Date()));
+		AllFiles uploadedFile = fileService.saveFile(new AllFiles(file.getName(), fileKey, null, NotificationUtils.getUKTime()));
 		return uploadedFile;
 	}
 
