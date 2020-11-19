@@ -19,31 +19,22 @@ public class AzureBlobAdapter {
 	@Autowired
 	BlobClientBuilder client;
 
-	public String upload(MultipartFile file, String prefixName) {
+	public String upload(MultipartFile file, String prefixName) throws IOException {
 		if (file != null && file.getSize() > 0) {
-			try {
-				// implement your own file name logic.
-				String fileName = prefixName + UUID.randomUUID().toString() + file.getOriginalFilename();
-				client.blobName(fileName).buildClient().upload(file.getInputStream(), file.getSize());
-				return fileName;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			// implement your own file name logic.
+			String fileName = prefixName + UUID.randomUUID().toString() + file.getOriginalFilename();
+			client.blobName(fileName).buildClient().upload(file.getInputStream(), file.getSize());
+			return fileName;
 		}
 		return null;
 	}
 
-	public byte[] getFile(String name) {
-		try {
-			File temp = new File("/temp/" + name);
-			BlobProperties properties = client.blobName(name).buildClient().downloadToFile(temp.getPath());
-			byte[] content = Files.readAllBytes(Paths.get(temp.getPath()));
-			temp.delete();
-			return content;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	public byte[] getFile(String name) throws IOException {
+		File temp = new File("/temp/" + name);
+		BlobProperties properties = client.blobName(name).buildClient().downloadToFile(temp.getPath());
+		byte[] content = Files.readAllBytes(Paths.get(temp.getPath()));
+		temp.delete();
+		return content;
 	}
 
 	public boolean deleteFile(String name) {

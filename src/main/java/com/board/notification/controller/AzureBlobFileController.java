@@ -30,7 +30,7 @@ public class AzureBlobFileController {
 	private AllFilesRepo allFilesRepo;
 
 	@PostMapping(path = "/upload", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-	public AllFiles uploadFile(@RequestPart(value = "file", required = true) MultipartFile file) {
+	public AllFiles uploadFile(@RequestPart(value = "file", required = true) MultipartFile file) throws IOException {
 		String fileKey = azureAdapter.upload(file, "prefix");
 		AllFiles uploadedFile = allFilesRepo.save(new AllFiles(file.getName(), fileKey, null, new Date()));
 		return uploadedFile;

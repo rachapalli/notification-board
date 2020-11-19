@@ -2,25 +2,28 @@ package com.board.notification.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class AppUser {
 	private Integer userId;
 
-	@NotBlank(message = "User Name is mandatory")
+	@NotBlank(message = "Name is mandatory")
+	@Min(value = 3, message = "Name minimum length is 3")
 	private String userName;
+	@NotBlank(message = "Password is mandatory")
 	private String password;
-	@NotBlank
+	@NotBlank(message = "Email is mandatory")
 	private String email;
 	private String alternateEmail;
-	@NotBlank
+	@NotBlank(message = "Contact Number is mandatory")
 	private String contactNumber;
 	private Integer createdBy;
 	private Date createdDate;
 	private Integer updatedBy;
 	private Date updatedDate;
-	@NotNull
+	@NotNull(message = "User Type is mandatory")
 	private UserTypeEnum userType;
 	private Permission permissions;
 	private Boolean isActive;
