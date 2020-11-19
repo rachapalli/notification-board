@@ -13,6 +13,7 @@ import com.board.notification.model.Invitation;
 import com.board.notification.model.Invitations;
 import com.board.notification.model.Invitee;
 import com.board.notification.service.InvitationService;
+import com.board.notification.utils.NotificationUtils;
 
 @Service
 public class InvitationServiceImpl implements InvitationService {
@@ -33,7 +34,7 @@ public class InvitationServiceImpl implements InvitationService {
 	public Invitation saveInvitation(Invitation invitation) {
 		Invitations invitations = new Invitations();
 		invitations.setMessage(invitation.getMessage());
-		invitations.setCreatedDate(invitation.getCreatedDate());
+		invitations.setCreatedDate(NotificationUtils.getUKTime());
 		invitations.setCreatedBy(invitation.getCreatedBy());
 		Invitations savedInvitations = invitationsRepo.save(invitations);
 
@@ -42,11 +43,11 @@ public class InvitationServiceImpl implements InvitationService {
 		invitee.setEmail(invitation.getEmail());
 		invitee.setContactNumber(invitation.getContactNumber());
 		invitee.setCreatedBy(invitation.getCreatedBy());
-		invitee.setCreatedDate(invitation.getCreatedDate());
+		invitee.setCreatedDate(NotificationUtils.getUKTime());
 		Invitee savdInvitee = inviteeRepo.save(invitee);
 
 		invitationsRepo.saveAllInvitattion(savedInvitations.getInvitationId(), savdInvitee.getInviteeId(),
-				invitation.getStatus(), invitation.getCreatedBy(), new Date());
+				invitation.getStatus(), invitation.getCreatedBy(), NotificationUtils.getUKTime());
 
 		return invitation;
 	}

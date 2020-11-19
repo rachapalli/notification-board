@@ -18,6 +18,13 @@ public class AuthenticationResponse implements Serializable {
 		this.message = message;
 	}
 
+	public AuthenticationResponse(String token, String message, Object results) {
+		super();
+		this.token = token;
+		this.message = message;
+		this.results = results;
+	}
+
 	public String getToken() {
 		return token;
 	}
