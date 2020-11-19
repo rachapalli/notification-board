@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.board.notification.exception.AlreadyExistsException;
 import com.board.notification.model.Groups;
 import com.board.notification.service.GroupService;
 
@@ -27,7 +28,7 @@ public class GroupController {
 
 	@PostMapping("/create")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Groups createGroup(@Valid @RequestBody Groups groups) {
+	public Groups createGroup(@Valid @RequestBody Groups groups) throws AlreadyExistsException {
 		return groupService.createOrUpdateGroup(groups);
 	}
 
