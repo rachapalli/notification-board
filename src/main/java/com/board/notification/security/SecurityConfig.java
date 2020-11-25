@@ -1,10 +1,9 @@
-package com.board.notification.config;
+package com.board.notification.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,7 +18,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import com.board.notification.filter.NotificationRequestFilter;
 import com.board.notification.service.impl.NotificationUserDetailsService;
 
 @Configuration
@@ -28,18 +26,13 @@ import com.board.notification.service.impl.NotificationUserDetailsService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private NotificationUserDetailsService userDetailsService;
-
-	@Autowired
 	private NotificationRequestFilter requestFilter;
-	
+
 	@Autowired
 	private NotificationEntryPoint notificationEntryPoint;
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-		authenticationManagerBuilder.userDetailsService(userDetailsService);
-	}
+	@Autowired
+	private NotificationUserDetailsService userDetailsService;
 
 	@Autowired
 	public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
@@ -48,9 +41,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf().disable().authorizeRequests().antMatchers(HttpMethod.OPTIONS,"/*").permitAll().anyRequest()
-				.authenticated().and().exceptionHandling().and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().formLogin().disable();;
+		httpSecurity.csrf().disable().authorizeRequests().antMatchers("/user/authenticate").permitAll()
+				.antMatchers("/user/register").permitAll().antMatchers("/user/userTypes").permitAll()
+				.antMatchers("/notification/getNotifications/*").permitAll().antMatchers("/file/download").permitAll()
+				.anyRequest().authenticated().and().exceptionHandling().authenticationEntryPoint(notificationEntryPoint)
+				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
+
 		httpSecurity.addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 
