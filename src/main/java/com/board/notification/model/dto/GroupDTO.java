@@ -1,26 +1,34 @@
-package com.board.notification.model;
+package com.board.notification.model.dto;
 
 import java.util.Date;
 
-import org.springframework.data.annotation.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-public class Groups {
+public class GroupDTO {
 	private Integer groupId;
+	
+	@NotBlank(message = "Group Name cannot be null or empty")
 	private String groupName;
+	
+	@NotNull(message = "isPublic cannot be null")
 	private Boolean isPublic;
+	
+	@NotNull(message = "createdBy cannot be null")
 	private Integer createdBy;
+	
 	private Date createdDate;
 	private Boolean isActive;
 
-	public Groups() {
+	public GroupDTO() {
 	}
 
-	public Groups(Integer groupId, String groupName) {
+	public GroupDTO(Integer groupId, String groupName) {
 		this.groupId = groupId;
 		this.groupName = groupName;
 	}
 
-	public Groups(Integer groupId, String groupName, Boolean isPublic, Integer createdBy, Date createdDate,
+	public GroupDTO(Integer groupId, String groupName, Boolean isPublic, Integer createdBy, Date createdDate,
 			Boolean isActive) {
 		this.groupId = groupId;
 		this.createdBy = createdBy;
@@ -30,7 +38,6 @@ public class Groups {
 		this.isActive = isActive;
 	}
 
-	@Id
 	public Integer getGroupId() {
 		return this.groupId;
 	}

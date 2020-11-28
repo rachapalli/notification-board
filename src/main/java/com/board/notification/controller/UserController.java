@@ -60,10 +60,10 @@ public class UserController {
 	
 	@PostMapping("/findUser")
 	public AppUser getUserByEmail(Map<String, String> requestMap) {
-		if (requestMap == null || requestMap.isEmpty() || requestMap.get(NotificationConstants.EMAIL) == null) {
-			throw new InvalidRequestException(NotificationConstants.REQUIRED_MSG + NotificationConstants.EMAIL);
+		if (requestMap == null || requestMap.isEmpty() || requestMap.get(NotificationConstants.KEY_EMAIL) == null) {
+			throw new InvalidRequestException(NotificationConstants.REQUIRED_MSG + NotificationConstants.KEY_EMAIL);
 		}
-		return userService.getUserByEmail(requestMap.get(NotificationConstants.EMAIL));
+		return userService.getUserByEmail(requestMap.get(NotificationConstants.KEY_EMAIL));
 	}
 
 	@GetMapping("/getUsers")

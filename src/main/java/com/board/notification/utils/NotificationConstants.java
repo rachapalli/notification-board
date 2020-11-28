@@ -13,7 +13,6 @@ public class NotificationConstants {
 	public static String MSG_DELETE_SUCCESS = "Deleted Successfully";
 	public static String MSG_NOT_NULL_EMPTY = " cannot be null or empty";
 	public static String MSG_NOT_FOUND = " not found";
-	public static String EMAIL = "email";
 	public static String INVALID_FILE_NAME = "Invalid File Name";
 	public static String INVALID_USER_EMAIL = "Invalid User Email/Not found";
 	public static String KEY_EMAIL = "email";
