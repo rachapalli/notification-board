@@ -3,7 +3,10 @@ package com.board.notification.model.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
+
 import com.board.notification.model.FileGroupNotification;
+import com.board.notification.model.Groups;
 import com.board.notification.model.MessageGroupNotification;
 import com.board.notification.model.NotificationType;
 
@@ -60,5 +63,19 @@ public class NotificationConverter {
 			}
 		}
 		return groupNotifications;
+	}
+
+	public static GroupDTO toGroupDto(Groups groups) {
+		GroupDTO groupDTO = new GroupDTO();
+		BeanUtils.copyProperties(groups, groupDTO);
+		return groupDTO;
+	}
+
+	public static List<GroupDTO> toGroupDTOs(Iterable<Groups> groups) {
+		List<GroupDTO> groupDTOs = new ArrayList<GroupDTO>();
+		for (Groups group : groups) {
+			groupDTOs.add(toGroupDto(group));
+		}
+		return groupDTOs;
 	}
 }
