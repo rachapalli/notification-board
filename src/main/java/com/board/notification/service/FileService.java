@@ -1,9 +1,9 @@
 package com.board.notification.service;
 
-import com.board.notification.model.AllFiles;
+import com.board.notification.model.dto.FileDTO;
 
 public interface FileService {
 
-	AllFiles saveFile(AllFiles files);
+	FileDTO saveFile(FileDTO files);
 
 }

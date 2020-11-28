@@ -2,14 +2,20 @@ package com.board.notification.service;
 
 import java.util.List;
 
-import com.board.notification.model.GroupNotification;
+import com.board.notification.model.dto.DeleteGroupNotificationDTO;
+import com.board.notification.model.dto.GroupNotificationDTO;
+import com.board.notification.model.dto.NotificationDTO;
 
 public interface NotificationService {
-	
-	List<GroupNotification> getGroupNotification(String groupName);
-	
-	GroupNotification saveGroupNotification(GroupNotification groupNotification);
-	
-	List<GroupNotification> getUserGroupNotifications(Integer userId);
+
+	List<GroupNotificationDTO> getGroupNotification(String groupName);
+
+	GroupNotificationDTO saveGroupNotification(GroupNotificationDTO groupNotification);
+
+	List<GroupNotificationDTO> getUserGroupNotifications(String userEmail);
+
+	NotificationDTO updateNotification(NotificationDTO notificationDTO);
+
+	void deleteNotification(DeleteGroupNotificationDTO deleteGroupNotification);
 
 }

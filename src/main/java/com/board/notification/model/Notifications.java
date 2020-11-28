@@ -7,10 +7,14 @@ import org.springframework.data.annotation.Id;
 public class Notifications {
 
 	private Integer notificationId;
-	private String message;
+	private String description;
+	private String ntype;
 	private Integer fileId;
+	private Integer messageId;
 	private Integer createdBy;
 	private Date createdDate;
+	private Integer updatedBy;
+	private Date updatedDate;
 
 	public Notifications() {
 	}
@@ -24,12 +28,12 @@ public class Notifications {
 		this.notificationId = notificationId;
 	}
 
-	public String getMessage() {
-		return this.message;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Integer getFileId() {
@@ -54,6 +58,38 @@ public class Notifications {
 
 	public void setCreatedBy(Integer createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	public Integer getMessageId() {
+		return messageId;
+	}
+
+	public void setMessageId(Integer messageId) {
+		this.messageId = messageId;
+	}
+
+	public String getNtype() {
+		return ntype;
+	}
+
+	public void setNtype(String ntype) {
+		this.ntype = ntype;
+	}
+
+	public Integer getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(Integer updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public Date getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(Date updatedDate) {
+		this.updatedDate = updatedDate;
 	}
 
 }

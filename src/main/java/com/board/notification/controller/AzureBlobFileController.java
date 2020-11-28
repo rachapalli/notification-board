@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.board.notification.model.AllFiles;
+import com.board.notification.model.dto.FileDTO;
 import com.board.notification.service.AzureBlobAdapter;
 import com.board.notification.service.FileService;
 import com.board.notification.utils.NotificationUtils;
@@ -30,9 +30,9 @@ public class AzureBlobFileController {
 	private FileService fileService;
 
 	@PostMapping(path = "/upload", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-	public AllFiles uploadFile(@RequestPart(value = "file", required = true) MultipartFile file) throws IOException {
+	public FileDTO uploadFile(@RequestPart(value = "file", required = true) MultipartFile file) throws IOException {
 		String fileKey = azureAdapter.upload(file, "prefix");
-		AllFiles uploadedFile = fileService.saveFile(new AllFiles(file.getName(), fileKey, null, NotificationUtils.getUKTime()));
+		FileDTO uploadedFile = fileService.saveFile(new FileDTO(file.getName(), fileKey, null, NotificationUtils.getUKTime()));
 		return uploadedFile;
 	}
 

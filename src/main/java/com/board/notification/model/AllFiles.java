@@ -13,6 +13,10 @@ public class AllFiles {
 	private Integer createdBy;
 	private Date createdDate;
 
+	public AllFiles() {
+		super();
+	}
+
 	public AllFiles(String name, String fileKey, Integer createdBy, Date createdDate) {
 		super();
 		this.name = name;
