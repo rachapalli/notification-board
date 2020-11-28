@@ -108,3 +108,16 @@ VALUES('NotificationBoard', 'NB@2020', 'notificationboard1@gmail.com','987456321
 INSERT INTO roles (role_name, created_by, created_date, is_active) values ('Admin',1,GETDATE(),1);
 INSERT INTO roles (role_name, created_by, created_date, is_active) values ('Board Owner',1,GETDATE(),1);
 INSERT INTO roles (role_name, created_by, created_date, is_active) values ('Member',1,GETDATE(),1);
+
+ALTER table notifications ADD NTYPE VARCHAR (10) NOT NULL;
+ALTER table notifications ADD DESCRIPTION TEXT NOT NULL;
+
+CREATE TABLE NOTIFICATION_MESSAGE(
+    MESSAGE_ID INT IDENTITY(1,1) PRIMARY KEY ,
+	MESSAGE TEXT,
+	created_by INT FOREIGN KEY REFERENCES users(user_id),
+    created_date DATETIME
+);
+
+alter table notifications add updated_by INT FOREIGN KEY REFERENCES users(user_id), updated_date DATETIME;
+alter table notifications drop COLUMN MESSAGE;

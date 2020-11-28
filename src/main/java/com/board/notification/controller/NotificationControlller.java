@@ -5,8 +5,6 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,31 +15,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.board.notification.exception.InvalidRequestException;
-import com.board.notification.model.AppUser;
 import com.board.notification.model.AuthenticationResponse;
-import com.board.notification.model.GroupNotification;
+import com.board.notification.model.dto.CommonResponse;
+import com.board.notification.model.dto.DeleteGroupNotificationDTO;
+import com.board.notification.model.dto.GroupNotificationDTO;
+import com.board.notification.model.dto.NotificationDTO;
 import com.board.notification.service.NotificationService;
-import com.board.notification.service.UserService;
+import com.board.notification.utils.NotificationConstants;
 
 @RestController
 @RequestMapping("/notification")
 public class NotificationControlller {
-	private static final Logger logger = LogManager.getLogger(NotificationControlller.class);
 
 	@Autowired
 	private NotificationService notificationService;
 
-	@Autowired
-	private UserService userService;
-
 	@GetMapping("/getNotifications/{groupName}")
-	public List<GroupNotification> getNotifications(@PathVariable(name = "groupName") String groupName) {
+	public List<GroupNotificationDTO> getNotifications(@PathVariable(name = "groupName") String groupName) {
 		return notificationService.getGroupNotification(groupName);
 	}
 
 	@PostMapping("/create")
-	public GroupNotification saveGroupNotification(@Valid @RequestBody GroupNotification groupNotification) {
-		return notificationService.saveGroupNotification(groupNotification);
+	public ResponseEntity<?> saveGroupNotification(@Valid @RequestBody GroupNotificationDTO groupNotification) {
+		GroupNotificationDTO savedGroupNotification = notificationService.saveGroupNotification(groupNotification);
+		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_CREATE_SUCCESS, savedGroupNotification));
+	}
+
+	@PostMapping("/update")
+	public ResponseEntity<?> updateNotification(@Valid @RequestBody NotificationDTO notification) {
+		NotificationDTO updateNotification = notificationService.updateNotification(notification);
+		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_UPDATE_SUCCESS, updateNotification));
+	}
+	
+	@PostMapping("/delete")
+	public ResponseEntity<?> deleteNotification(@Valid @RequestBody DeleteGroupNotificationDTO deleteGroupNotification) {
+		notificationService.deleteNotification(deleteGroupNotification);
+		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_DELETE_SUCCESS));
 	}
 
 	@GetMapping("/test")
@@ -50,15 +59,10 @@ public class NotificationControlller {
 	}
 
 	@PostMapping("/getUserGroupNotifications")
-	public List<GroupNotification> getUserGroupNotifications(@RequestBody Map<String, String> input) {
-		if (input != null && !input.isEmpty() && input.get("email") != null) {
-			AppUser user = userService.getUserByEmail(input.get("email"));
-			if (user == null) {
-				throw new InvalidRequestException("User not found");
-			}
-			return notificationService.getUserGroupNotifications(user.getUserId());
-		} else {
+	public List<GroupNotificationDTO> getUserGroupNotifications(@RequestBody Map<String, String> input) {
+		if (input == null || input.isEmpty() || input.get(NotificationConstants.KEY_EMAIL) == null) {
 			throw new InvalidRequestException("Email is mandatory");
 		}
+		return notificationService.getUserGroupNotifications(input.get(NotificationConstants.KEY_EMAIL));
 	}
 }

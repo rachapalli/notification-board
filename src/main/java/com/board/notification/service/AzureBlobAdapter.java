@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.azure.storage.blob.BlobClientBuilder;
 import com.azure.storage.blob.models.BlobProperties;
+import com.board.notification.utils.NotificationConstants;
 
 @Service
 public class AzureBlobAdapter {
@@ -30,6 +31,9 @@ public class AzureBlobAdapter {
 	}
 
 	public byte[] getFile(String name) throws IOException {
+		if (name == null || name.isEmpty() || "NULL".equalsIgnoreCase(name)) {
+			throw new IOException(NotificationConstants.INVALID_FILE_NAME + name);
+		}
 		File temp = new File("/home/temp/" + name);
 		BlobProperties properties = client.blobName(name).buildClient().downloadToFile(temp.getPath());
 		byte[] content = Files.readAllBytes(Paths.get(temp.getPath()));
