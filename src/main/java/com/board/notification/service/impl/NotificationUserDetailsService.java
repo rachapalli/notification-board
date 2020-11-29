@@ -10,8 +10,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.board.notification.LoggingAspect;
-import com.board.notification.model.AppUser;
 import com.board.notification.model.UserSecurityDetails;
+import com.board.notification.model.dto.AppUser;
 import com.board.notification.service.UserService;
 
 @Service

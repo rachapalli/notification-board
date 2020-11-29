@@ -13,9 +13,7 @@ public class Users {
 	private String email;
 	private String alternateEmail;
 	private String contactNumber;
-	private Integer createdBy;
 	private Date createdDate;
-	private Integer updatedBy;
 	private Date updatedDate;
 	private Boolean isActive;
 	private Integer roleId;
@@ -31,16 +29,14 @@ public class Users {
 		this.contactNumber = contactNumber;
 	}
 
-	public Users(Integer userId, String userName, String password, String email, String contactNumber,
-			Integer createdBy, Date createdDate, Integer updatedBy, Date updatedDate, Boolean isActive) {
+	public Users(Integer userId, String userName, String password, String email, String contactNumber, Date createdDate,
+			Date updatedDate, Boolean isActive) {
 		this.userId = userId;
 		this.userName = userName;
 		this.password = password;
 		this.email = email;
 		this.contactNumber = contactNumber;
-		this.createdBy = createdBy;
 		this.createdDate = createdDate;
-		this.updatedBy = updatedBy;
 		this.updatedDate = updatedDate;
 		this.isActive = isActive;
 	}
@@ -85,28 +81,12 @@ public class Users {
 		this.contactNumber = contactNumber;
 	}
 
-	public Integer getCreatedBy() {
-		return this.createdBy;
-	}
-
-	public void setCreatedBy(Integer createdBy) {
-		this.createdBy = createdBy;
-	}
-
 	public Date getCreatedDate() {
 		return this.createdDate;
 	}
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
-	}
-
-	public Integer getUpdatedBy() {
-		return this.updatedBy;
-	}
-
-	public void setUpdatedBy(Integer updatedBy) {
-		this.updatedBy = updatedBy;
 	}
 
 	public Date getUpdatedDate() {

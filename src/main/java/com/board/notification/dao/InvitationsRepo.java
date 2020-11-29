@@ -12,13 +12,13 @@ import com.board.notification.model.Invitation;
 import com.board.notification.model.Invitations;
 
 public interface InvitationsRepo extends CrudRepository<Invitations, Integer> {
-	@Query(value = "select ite.invitee_name, ite.email,ite.contact_number,its.message, ai.status, its.created_by, its.created_date from all_invitations ai, invitee ite, invitations its "
-			+ "where ai.invitation_id=its.invitation_id and ai.invitee_id=ite.invitee_id")
+	@Query(value = "select ite.invitee_name, ite.email,its.subject, its.message, ai.status, ai.status_msg, ai.created_by, ai.created_date, u.user_name from all_invitations ai, invitee ite, invitations its, users u where ai.invitation_id=its.invitation_id and ai.invitee_id=ite.invitee_id and u.user_id=ai.created_by")
 	public List<Invitation> getAllInvitation();
 
 	@Modifying
-	@Query(value = "insert into all_invitations (invitation_id, invitee_id, status, created_by, created_date) "
-			+ "values (:invitationId, :inviteeId, :status, :createdBy, :createdDate)")
-	public void saveAllInvitattion(@Param("invitationId") Integer invitationId, @Param("inviteeId") Integer inviteeId,
-			@Param("status") String status, @Param("createdBy") Integer createdBy, @Param("createdDate") Date createdDate);
+	@Query(value = "insert into all_invitations(invitation_id, invitee_id, status, status_msg, created_by, created_date) "
+			+ "values (:invitationId, :inviteeId, :status, :statusMsg, :createdBy, :createdDate)")
+	public void saveAllInvitation(@Param("invitationId") Integer invitationId, @Param("inviteeId") Integer inviteeId,
+			@Param("status") String status, @Param("statusMsg") String statusMsg, @Param("createdBy") Integer createdBy,
+			@Param("createdDate") Date createdDate);
 }

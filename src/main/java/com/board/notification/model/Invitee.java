@@ -1,7 +1,5 @@
 package com.board.notification.model;
 
-import java.util.Date;
-
 import org.springframework.data.annotation.Id;
 
 public class Invitee {
@@ -9,28 +7,18 @@ public class Invitee {
 	private Integer inviteeId;
 	private String inviteeName;
 	private String email;
-	private String contactNumber;
-	private Integer createdBy;
-	private Date createdDate;
 
 	public Invitee() {
 	}
 
-	public Invitee(Integer inviteeId, String inviteeName, String email, String contactNumber) {
+	public Invitee(Integer inviteeId, String inviteeName, String email) {
 		this.inviteeId = inviteeId;
 		this.inviteeName = inviteeName;
 		this.email = email;
-		this.contactNumber = contactNumber;
 	}
 
-	public Invitee(Integer inviteeId, String inviteeName, String email, String contactNumber, Integer createdBy,
-			Date createdDate) {
-		this.inviteeId = inviteeId;
-		this.inviteeName = inviteeName;
+	public Invitee(String email) {
 		this.email = email;
-		this.contactNumber = contactNumber;
-		this.createdBy = createdBy;
-		this.createdDate = createdDate;
 	}
 
 	@Id
@@ -56,30 +44,6 @@ public class Invitee {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getContactNumber() {
-		return this.contactNumber;
-	}
-
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
-	}
-
-	public Date getCreatedDate() {
-		return this.createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public Integer getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Integer createdBy) {
-		this.createdBy = createdBy;
 	}
 
 }

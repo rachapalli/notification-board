@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.board.notification.exception.AlreadyExistsException;
 import com.board.notification.exception.InvalidRequestException;
-import com.board.notification.model.AppUser;
 import com.board.notification.model.AuthenticationRequest;
 import com.board.notification.model.AuthenticationResponse;
+import com.board.notification.model.dto.AppUser;
+import com.board.notification.model.dto.CommonResponse;
 import com.board.notification.service.UserService;
 import com.board.notification.service.impl.NotificationUserDetailsService;
 import com.board.notification.utils.NotificationConstants;
@@ -49,15 +49,31 @@ public class UserController {
 
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
-	public AppUser createAppUser(@Valid @RequestBody AppUser appUser) throws AlreadyExistsException {
-		return userService.createOrUpdateUser(appUser);
+	public ResponseEntity<CommonResponse> createUser(@Valid @RequestBody AppUser appUser) {
+		AppUser createdAppUser = userService.createUser(appUser);
+		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_CREATE_SUCCESS, createdAppUser));
+	}
+
+	@PostMapping("/update")
+	public ResponseEntity<CommonResponse> updateUser(@Valid @RequestBody AppUser appUser) {
+		AppUser updatedUser = userService.updateUser(appUser);
+		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_UPDATE_SUCCESS, updatedUser));
+	}
+
+	@PostMapping("/delete")
+	public ResponseEntity<CommonResponse> createAppUser(@RequestBody AppUser appUser) {
+		if (appUser == null || appUser.getEmail() == null || appUser.getEmail().isEmpty()) {
+			throw new InvalidRequestException("email " + NotificationConstants.MSG_NOT_NULL_EMPTY);
+		}
+		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_DELETE_SUCCESS,
+				userService.deleteUser(appUser.getEmail())));
 	}
 
 	@GetMapping("/{email}")
 	public AppUser getUserByEmail(@PathVariable(name = "email") String email) {
 		return userService.getUserByEmail(email);
 	}
-	
+
 	@PostMapping("/findUser")
 	public AppUser getUserByEmail(Map<String, String> requestMap) {
 		if (requestMap == null || requestMap.isEmpty() || requestMap.get(NotificationConstants.KEY_EMAIL) == null) {

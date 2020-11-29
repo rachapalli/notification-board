@@ -2,21 +2,16 @@ package com.board.notification.model;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotBlank;
-
 public class Invitation {
-	@NotBlank
 	private String inviteeName;
-	@NotBlank
 	private String email;
-	private String contactNumber;
-	@NotBlank
 	private String subject;
-	@NotBlank
 	private String message;
 	private String status;
+	private String statusMsg;
 	private Integer createdBy;
 	private Date createdDate;
+	private String userName;
 
 	public String getInviteeName() {
 		return inviteeName;
@@ -34,12 +29,12 @@ public class Invitation {
 		this.email = email;
 	}
 
-	public String getContactNumber() {
-		return contactNumber;
+	public String getSubject() {
+		return subject;
 	}
 
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 	public String getMessage() {
@@ -58,6 +53,14 @@ public class Invitation {
 		this.status = status;
 	}
 
+	public String getStatusMsg() {
+		return statusMsg;
+	}
+
+	public void setStatusMsg(String statusMsg) {
+		this.statusMsg = statusMsg;
+	}
+
 	public Integer getCreatedBy() {
 		return createdBy;
 	}
@@ -74,12 +77,12 @@ public class Invitation {
 		this.createdDate = createdDate;
 	}
 
-	public String getSubject() {
-		return subject;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setSubject(String subject) {
-		this.subject = subject;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }

@@ -103,5 +103,10 @@ public class GroupServiceImpl implements GroupService {
 	public List<GroupDTO> getUserGroups(String emailId) {
 		return NotificationConverter.toGroupDTOs(groupRepo.getAllUserGroupsByEmail(emailId));
 	}
+	
+	@Override
+	public List<GroupDTO> getOwnerGroups(String emailId) {
+		return NotificationConverter.toGroupDTOs(groupRepo.getBoardOwnerGroups(emailId));
+	}
 
 }
