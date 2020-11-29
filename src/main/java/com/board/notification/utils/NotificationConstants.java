@@ -13,8 +13,19 @@ public class NotificationConstants {
 	public static String MSG_DELETE_SUCCESS = "Deleted Successfully";
 	public static String MSG_NOT_NULL_EMPTY = " cannot be null or empty";
 	public static String MSG_NOT_FOUND = " not found";
+	public static String MSG_INVALID_EMAIL = "Invalid email address";
 	public static String INVALID_FILE_NAME = "Invalid File Name";
 	public static String INVALID_USER_EMAIL = "Invalid User Email/Not found";
 	public static String KEY_EMAIL = "email";
+	public static String PH_RNAME = "<<RNAME>>";
+	public static String PH_BNAME = "<<BNAME>>";
+	public static String PH_BOARD_LINK = "<<BOARD_LINK>>";
+	public static String PH_USER_NAME = "<<USER_NAME>>";
+	public static String PH_USER_APPR_LINK = "<<USER_APPR_LINK>>";
+	public static String EMAIL_PATTERN = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+	public static String DB_PROP_ADMIN_USER_EMAIL_ID = "ADMIN.USER.EMAIL.ID";
+	public static String DB_PROP_USER_REGI_APPR_LINK_ = "USER.REGI.APPR.LINK";
+	public static String DB_PROP_USER_REGI_EMAIL_BODY = "USER.REGI.EMAIL.BODY";
+	public static String DB_PROP_USER_REGI_EMAIL_SUBJECT = "USER.REGI.EMAIL.SUBJECT";
 
 }

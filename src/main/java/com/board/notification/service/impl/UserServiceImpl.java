@@ -6,22 +6,25 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.board.notification.dao.GroupRepo;
 import com.board.notification.dao.PermissionRepo;
 import com.board.notification.dao.RolesRepo;
 import com.board.notification.dao.UserRepo;
 import com.board.notification.exception.AlreadyExistsException;
 import com.board.notification.exception.DataNotFoundException;
+import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.ActiveStatusEnum;
-import com.board.notification.model.AppUser;
-import com.board.notification.model.Invitation;
+import com.board.notification.model.Groups;
 import com.board.notification.model.Permission;
 import com.board.notification.model.Roles;
-import com.board.notification.model.StatusEnum;
 import com.board.notification.model.UserTypeEnum;
 import com.board.notification.model.Users;
+import com.board.notification.model.dto.AppUser;
+import com.board.notification.model.dto.EmailDTO;
 import com.board.notification.service.EmailService;
 import com.board.notification.service.UserService;
 import com.board.notification.utils.NotificationConstants;
@@ -35,49 +38,107 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private RolesRepo rolesRepo;
-	
+
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Autowired
 	private PermissionRepo permissionRepo;
 
-	@Transactional
+	@Autowired
+	private GroupRepo groupRepo;
+	
+	@Autowired
+	private Environment env;
+	
 	@Override
-	public AppUser createOrUpdateUser(AppUser appUser) throws AlreadyExistsException {
+	public AppUser createUser(AppUser appUser) {
 		if (appUser.getUserId() != null) {
-			if (appUser.getUserType() != null) {
-				Roles role = rolesRepo.findByRoleName(appUser.getUserType().toString());
-				Users user = new Users();
-				user.setUpdatedDate(NotificationUtils.getUKTime());
-				BeanUtils.copyProperties(appUser, user);
-				user.setRoleId(role.getRoleId());
-				userRepo.save(user);
-			}
-		} else {
-			validateUser(appUser);
-			Users user = new Users();
-			BeanUtils.copyProperties(appUser, user);
-			user.setCreatedDate(NotificationUtils.getUKTime());
-			user.setUpdatedDate(NotificationUtils.getUKTime());
-			Roles userRole = rolesRepo.findByRoleName(appUser.getUserType().toString());
-			if (userRole != null) {
-				user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
-				user.setRoleId(userRole.getRoleId());
-				Users savedUser = userRepo.save(user);
-				appUser.setUserId(savedUser.getUserId());
-				sendActivationEmail(appUser);
-			} else {
-				new DataNotFoundException("Role not found");
-			}
+			throw new InvalidRequestException("User cannot be updated here");
 		}
+		validateUser(appUser);
+		Users user = new Users();
+		BeanUtils.copyProperties(appUser, user);
+		user.setCreatedDate(NotificationUtils.getUKTime());
+		Roles userRole = rolesRepo.findByRoleName(appUser.getUserType().toString());
+		if (userRole == null) {
+			throw new DataNotFoundException("Role " + appUser.getUserType() + NotificationConstants.MSG_NOT_FOUND);
+		}
+
+		EmailDTO emailDTO = new EmailDTO();
+		
+		if (UserTypeEnum.MEMBER.equals(appUser.getUserType())) {
+			if (appUser.getGroupName() == null || appUser.getGroupName().isEmpty()) {
+				throw new InvalidRequestException("For User type Member group name is mandatory");
+			}
+			Groups group = groupRepo.findByGroupName(appUser.getGroupName());
+			if (group == null) {
+				throw new InvalidRequestException(
+						"Group " + appUser.getGroupName() + NotificationConstants.MSG_NOT_FOUND);
+			}
+			AppUser groupOwner = findUserById(group.getCreatedBy());
+			emailDTO.setEmail(groupOwner.getEmail());
+			emailDTO.setMessage(prepareUserRegBody(appUser.getUserName(), group.getGroupName(), appUser.getEmail()));
+		} else 
+		
+		if (UserTypeEnum.BOARD_OWNER.equals(appUser.getUserType())) {
+			emailDTO.setEmail(env.getProperty(NotificationConstants.DB_PROP_ADMIN_USER_EMAIL_ID));
+			emailDTO.setMessage(prepareUserRegBody(appUser.getUserName(), "", appUser.getEmail()));
+		}
+		emailDTO.setSubject(env.getProperty(NotificationConstants.DB_PROP_USER_REGI_EMAIL_SUBJECT));
+				
+		user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
+		user.setRoleId(userRole.getRoleId());
+		Users savedUser = userRepo.save(user);
+		appUser.setUserId(savedUser.getUserId());
+		emailService.sendEmail(emailDTO);
 		return appUser;
 	}
 	
+	@Override
+	public AppUser updateUser(AppUser appUser) {
+		if (appUser.getUserId() == null) {
+			throw new InvalidRequestException("User id required to update user");
+		}
+		Optional<Users> userOptional = userRepo.findById(appUser.getUserId());
+		if (!userOptional.isPresent()) {
+			throw new DataNotFoundException("User " + NotificationConstants.MSG_NOT_FOUND);
+		}
+		Users dbUser = userOptional.get();
+		if (!dbUser.getEmail().equals(appUser.getEmail())) {
+			validateUser(appUser);
+		}
+		dbUser.setEmail(appUser.getEmail());
+		dbUser.setAlternateEmail(appUser.getAlternateEmail());
+		dbUser.setUserName(appUser.getUserName());
+		dbUser.setPassword(appUser.getPassword());
+		dbUser.setContactNumber(appUser.getContactNumber());
+		dbUser.setUpdatedDate(NotificationUtils.getUKTime());
+		userRepo.save(dbUser);
+		return appUser;
+	}
+	
+	@Override
+	public boolean deleteUser(String email) {
+		boolean status = false;
+		Users user = userRepo.findByEmail(email);
+		if (user == null) {
+			throw new DataNotFoundException("User " + NotificationConstants.MSG_NOT_FOUND);
+		}
+		user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
+		user.setUpdatedDate(NotificationUtils.getUKTime());
+		userRepo.save(user);
+		status = true;
+		return status;
+	}
+
 	private boolean validateUser(AppUser appUser) throws AlreadyExistsException {
 		Users user = userRepo.findByEmail(appUser.getEmail());
 		if (user != null) {
 			throw new AlreadyExistsException(NotificationConstants.MSG_EMAIL_EXISTS);
+		}
+		if (UserTypeEnum.ADMIN.equals(appUser.getUserType())) {
+			throw new InvalidRequestException("User type Admin cannot be updated or created");
 		}
 		return false;
 	}
@@ -135,30 +196,38 @@ public class UserServiceImpl implements UserService {
 		return status;
 	}
 
-	private boolean sendActivationEmail(AppUser user) {
-		boolean status = false;
-		StringBuilder message = new StringBuilder();
-		message.append("Welcome ").append(user.getUserName()).append("\n\n")
-				.append("Please click on below link to activate").append("\n\n")
-				.append("http://127.0.0.1:8080/user/activate?key=")
-				.append(NotificationUtils.encodeString(user.getEmail()));
-		Invitation invitation = new Invitation();
-		invitation.setEmail(user.getEmail());
-		invitation.setMessage(message.toString());
-		invitation.setSubject("Finish setting up your new Account");
-		StatusEnum statusEnum = emailService.sendEmail(invitation);
-		status = StatusEnum.SUCCESS.equals(statusEnum);
-		return status;
-	}
-	
 	@Override
 	public List<String> getAllActiveUserTypes() {
 		return rolesRepo.getAllActiveRoles();
 	}
-	
+
 	@Override
 	public Permission getRolePermission(Integer roleId) {
 		return permissionRepo.findByRoleId(roleId);
+	}
+	
+	@Override
+	public AppUser findUserById(Integer userId) {
+		if (userId == null) {
+			throw new InvalidRequestException("User Id " + NotificationConstants.MSG_NOT_NULL_EMPTY);
+		}
+		Optional<Users> userOptional = userRepo.findById(userId);
+		if (!userOptional.isPresent()) {
+			throw new DataNotFoundException("User " + NotificationConstants.MSG_NOT_FOUND);
+		}
+		AppUser appUser = new AppUser();
+		BeanUtils.copyProperties(userOptional.get(), appUser);
+		return appUser;
+	}
+	
+	private String prepareUserRegBody(String userName, String groupName, String email) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_USER_REGI_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_BNAME, groupName)
+				.replace(NotificationConstants.PH_USER_APPR_LINK,
+						env.getProperty(NotificationConstants.DB_PROP_USER_REGI_APPR_LINK_)
+								+ NotificationUtils.encodeString(email))
+				.replace(NotificationConstants.PH_USER_NAME, userName);
+		return message;
 	}
 
 }

@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import javax.mail.MessagingException;
 
-import com.board.notification.model.Invitation;
-import com.board.notification.model.StatusEnum;
+import com.board.notification.model.dto.EmailDTO;
+import com.board.notification.model.dto.EmailStatusDTO;
 
 public interface EmailService {
-	public StatusEnum sendEmail(Invitation invitation);
+	public EmailStatusDTO sendEmail(EmailDTO emailDTO);
 
-	void sendEmailWithAttachment(Invitation invitation) throws MessagingException, IOException;
+	void sendEmailWithAttachment(EmailDTO invitation) throws MessagingException, IOException;
 }

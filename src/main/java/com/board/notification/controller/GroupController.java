@@ -56,7 +56,7 @@ public class GroupController {
 			throw new InvalidRequestException(
 					NotificationConstants.KEY_EMAIL + NotificationConstants.MSG_NOT_NULL_EMPTY);
 		}
-		return groupService.getUserGroups(userInput.get(NotificationConstants.KEY_EMAIL));
+		return groupService.getOwnerGroups(userInput.get(NotificationConstants.KEY_EMAIL));
 	}
 
 }

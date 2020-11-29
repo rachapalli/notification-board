@@ -1,17 +1,20 @@
 package com.board.notification.model;
 
-import java.util.Date;
-
 import org.springframework.data.annotation.Id;
 
 public class Invitations {
 
 	private Integer invitationId;
+	private String subject;
 	private String message;
-	private Integer createdBy;
-	private Date createdDate;
 
 	public Invitations() {
+	}
+
+	public Invitations(String subject, String message) {
+		super();
+		this.subject = subject;
+		this.message = message;
 	}
 
 	@Id
@@ -31,20 +34,12 @@ public class Invitations {
 		this.message = message;
 	}
 
-	public Date getCreatedDate() {
-		return this.createdDate;
+	public String getSubject() {
+		return subject;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
-	public Integer getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Integer createdBy) {
-		this.createdBy = createdBy;
-	}
-	
 }

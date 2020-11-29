@@ -14,9 +14,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.board.notification.model.Invitation;
 import com.board.notification.model.StatusEnum;
+import com.board.notification.model.dto.EmailDTO;
+import com.board.notification.model.dto.EmailStatusDTO;
 import com.board.notification.service.EmailService;
+import com.board.notification.utils.NotificationConstants;
+import com.board.notification.utils.NotificationUtils;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -26,22 +29,27 @@ public class EmailServiceImpl implements EmailService {
 	private JavaMailSender javaMailSender;
 
 	@Override
-	public StatusEnum sendEmail(Invitation invitation) {
+	public EmailStatusDTO sendEmail(EmailDTO emailDTO) {
+		EmailStatusDTO emailStatus = null;
+		if (!NotificationUtils.isValidEmail(emailDTO.getEmail())) {
+			return new EmailStatusDTO(emailDTO.getEmail(), StatusEnum.FAIL, NotificationConstants.MSG_INVALID_EMAIL);
+		}
 		try {
 			SimpleMailMessage simplMailMessage = new SimpleMailMessage();
-			simplMailMessage.setTo(invitation.getEmail());
-			simplMailMessage.setSubject(invitation.getSubject());
-			simplMailMessage.setText(invitation.getMessage());
+			simplMailMessage.setTo(emailDTO.getEmail());
+			simplMailMessage.setSubject(emailDTO.getSubject());
+			simplMailMessage.setText(emailDTO.getMessage());
 			javaMailSender.send(simplMailMessage);
+			emailStatus = new EmailStatusDTO(emailDTO.getEmail(), StatusEnum.SUCCESS);
 		} catch (Exception e) {
-			logger.error("Error while sending email to:" + invitation.getEmail(), e);
-			return StatusEnum.FAIL;
+			logger.error("Error while sending email to:" + emailDTO.getEmail(), e);
+			emailStatus = new EmailStatusDTO(emailDTO.getEmail(), StatusEnum.FAIL, e.getMessage());
 		}
-		return StatusEnum.SUCCESS;
+		return emailStatus;
 	}
 
 	@Override
-	public void sendEmailWithAttachment(Invitation invitation) throws MessagingException, IOException {
+	public void sendEmailWithAttachment(EmailDTO emailDTO) throws MessagingException, IOException {
 		MimeMessage msg = javaMailSender.createMimeMessage();
 		// true = multipart message
 		MimeMessageHelper helper = new MimeMessageHelper(msg, true);

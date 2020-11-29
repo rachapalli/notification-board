@@ -22,6 +22,7 @@ public class NotificationUtils {
 
 	/**
 	 * Method to get UK date and time
+	 * 
 	 * @return UK date
 	 */
 	public static Date getUKTime() {
@@ -35,5 +36,17 @@ public class NotificationUtils {
 			e.printStackTrace();
 		}
 		return date;
+	}
+
+	/**
+	 * Method to validate email
+	 * 
+	 * @param email
+	 * @return true if valid else false
+	 */
+	public static boolean isValidEmail(String email) {
+		java.util.regex.Pattern p = java.util.regex.Pattern.compile(NotificationConstants.EMAIL_PATTERN);
+		java.util.regex.Matcher m = p.matcher(email);
+		return m.matches();
 	}
 }

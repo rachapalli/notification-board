@@ -16,4 +16,6 @@ public interface GroupService {
 	GroupDTO updateGroup(GroupDTO groupDTO);
 
 	GroupDTO createGroup(GroupDTO groupDTO);
+
+	List<GroupDTO> getOwnerGroups(String emailId);
 }
