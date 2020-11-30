@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
 			Optional<Roles> optRole = rolesRepo.findById(user.getRoleId());
 			if (optRole.isPresent()) {
 				appUser.setUserType(UserTypeEnum.decode(optRole.get().getRoleName()));
-				appUser.setPermissions(getRolePermission(user.getRoleId()));
+				//appUser.setPermissions(getRolePermission(user.getRoleId()));
 			}
 		} else {
 			throw new DataNotFoundException("User not found.");
@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
 				Optional<Roles> optRole = rolesRepo.findById(user.getRoleId());
 				if (optRole.isPresent()) {
 					appUser.setUserType(UserTypeEnum.decode(optRole.get().getRoleName()));
-					appUser.setPermissions(getRolePermission(user.getRoleId()));
+					//appUser.setPermissions(getRolePermission(user.getRoleId()));
 				}
 			}
 			allUsers.add(appUser);
