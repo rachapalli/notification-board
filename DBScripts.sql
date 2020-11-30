@@ -99,6 +99,22 @@ CREATE TABLE group_notifications(
 	CONSTRAINT uq_group_notifications UNIQUE (group_id, notification_id)
 );
 
+CREATE TABLE component (
+    component_id INT IDENTITY(1,1) PRIMARY KEY ,
+    name VARCHAR (50)
+);
+
+CREATE TABLE permission (
+    permission_id INT IDENTITY(1,1) PRIMARY KEY,
+	role_id INT FOREIGN KEY REFERENCES roles(role_id),
+	component_id INT FOREIGN KEY REFERENCES component(component_id),
+    is_create BIT NOT NULL,
+	is_edit BIT NOT NULL,
+	is_view BIT NOT NULL,
+	is_delete BIT NOT NULL,
+	CONSTRAINT uq_permission_role_component UNIQUE (role_id, component_id)
+);
+
 INSERT INTO users(user_name,password,email,contact_number,is_active)
 VALUES('NotificationBoard', 'NB@2020', 'notificationboard1@gmail.com','9874563210', 1 );
 
@@ -151,3 +167,13 @@ insert into APP_PROPERTIES values ('USER.REGI.APPR.LINK','https://notification-d
 insert into APP_PROPERTIES values ('ADMIN.USER.EMAIL.ID','notificationboard1@gmail.com');
 
 alter table users drop COLUMN created_by,updated_by;
+
+insert into component(name) VALUES ('BOARD_ADD');
+insert into component(name) VALUES ('BOARD_DELETE');
+insert into component(name) VALUES ('BOARD_EDIT');
+insert into component(name) VALUES ('BOARD_VIEW');
+
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,2,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,3,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,4,1,1,1,1);

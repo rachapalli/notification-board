@@ -7,6 +7,7 @@ public class Permission {
 	@Id
 	private Integer permissionId;
 	private Integer roleId;
+	private Integer componentId;
 	private Boolean isCreate;
 	private Boolean isView;
 	private Boolean isEdit;
@@ -58,6 +59,14 @@ public class Permission {
 
 	public void setIsDelete(Boolean isDelete) {
 		this.isDelete = isDelete;
+	}
+
+	public Integer getComponentId() {
+		return componentId;
+	}
+
+	public void setComponentId(Integer componentId) {
+		this.componentId = componentId;
 	}
 
 }

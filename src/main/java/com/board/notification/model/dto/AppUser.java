@@ -1,12 +1,12 @@
 package com.board.notification.model.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.board.notification.model.Permission;
 import com.board.notification.model.UserTypeEnum;
 
 public class AppUser {
@@ -35,7 +35,7 @@ public class AppUser {
 	private Date createdDate;
 	private Date updatedDate;
 
-	private Permission permissions;
+	private List<PermissionDTO> permissions;
 	private Boolean isActive;
 
 	public Integer getUserId() {
@@ -118,11 +118,11 @@ public class AppUser {
 		this.updatedDate = updatedDate;
 	}
 
-	public Permission getPermissions() {
+	public List<PermissionDTO> getPermissions() {
 		return permissions;
 	}
 
-	public void setPermissions(Permission permissions) {
+	public void setPermissions(List<PermissionDTO> permissions) {
 		this.permissions = permissions;
 	}
 
