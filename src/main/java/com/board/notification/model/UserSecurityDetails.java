@@ -2,10 +2,12 @@ package com.board.notification.model;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.board.notification.model.dto.PermissionDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UserSecurityDetails implements UserDetails {
@@ -21,6 +23,7 @@ public class UserSecurityDetails implements UserDetails {
 	private Boolean accountNonLocked = true;
 	private Boolean credentialsNonExpired = true;
 	private Boolean enabled = true;
+	private List<PermissionDTO> permissions = null;
 
 	public UserSecurityDetails() {
 		super();
@@ -44,6 +47,26 @@ public class UserSecurityDetails implements UserDetails {
 		this.setEmail(email);
 		this.setLastPasswordReset(lastPasswordReset);
 		this.setAuthorities(authorities);
+	}
+	
+	/**
+	 * Parameterized constructor to initialized the fields
+	 * 
+	 * @param id                user id
+	 * @param username          username
+	 * @param password          password
+	 * @param email             email
+	 * @param lastPasswordReset last password
+	 * @param permissions       authrorities or role information for permission
+	 */
+	public UserSecurityDetails(Integer id, String username, String password, String email, Date lastPasswordReset,
+			List<PermissionDTO> permissions) {
+		this.setId(id);
+		this.setUsername(username);
+		this.setPassword(password);
+		this.setEmail(email);
+		this.setLastPasswordReset(lastPasswordReset);
+		this.setPermissions(permissions);
 	}
 
 	/**
@@ -219,6 +242,14 @@ public class UserSecurityDetails implements UserDetails {
 	 */
 	public boolean isEnabled() {
 		return this.getEnabled();
+	}
+
+	public List<PermissionDTO> getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(List<PermissionDTO> permissions) {
+		this.permissions = permissions;
 	}
 
 }

@@ -19,12 +19,12 @@ import com.board.notification.exception.DataNotFoundException;
 import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.ActiveStatusEnum;
 import com.board.notification.model.Groups;
-import com.board.notification.model.Permission;
 import com.board.notification.model.Roles;
 import com.board.notification.model.UserTypeEnum;
 import com.board.notification.model.Users;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.EmailDTO;
+import com.board.notification.model.dto.PermissionDTO;
 import com.board.notification.service.EmailService;
 import com.board.notification.service.UserService;
 import com.board.notification.utils.NotificationConstants;
@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
 			Optional<Roles> optRole = rolesRepo.findById(user.getRoleId());
 			if (optRole.isPresent()) {
 				appUser.setUserType(UserTypeEnum.decode(optRole.get().getRoleName()));
-				//appUser.setPermissions(getRolePermission(user.getRoleId()));
+				appUser.setPermissions(getRolePermission(user.getRoleId()));
 			}
 		} else {
 			throw new DataNotFoundException("User not found.");
@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
 				Optional<Roles> optRole = rolesRepo.findById(user.getRoleId());
 				if (optRole.isPresent()) {
 					appUser.setUserType(UserTypeEnum.decode(optRole.get().getRoleName()));
-					//appUser.setPermissions(getRolePermission(user.getRoleId()));
+					appUser.setPermissions(getRolePermission(user.getRoleId()));
 				}
 			}
 			allUsers.add(appUser);
@@ -202,8 +202,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Permission getRolePermission(Integer roleId) {
-		return permissionRepo.findByRoleId(roleId);
+	public List<PermissionDTO> getRolePermission(Integer roleId) {
+		return permissionRepo.findRolePermissionsByRoleId(roleId);
 	}
 	
 	@Override

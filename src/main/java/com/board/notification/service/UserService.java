@@ -2,8 +2,8 @@ package com.board.notification.service;
 
 import java.util.List;
 
-import com.board.notification.model.Permission;
 import com.board.notification.model.dto.AppUser;
+import com.board.notification.model.dto.PermissionDTO;
 
 public interface UserService {
 
@@ -15,7 +15,7 @@ public interface UserService {
 
 	List<String> getAllActiveUserTypes();
 
-	Permission getRolePermission(Integer roleId);
+	List<PermissionDTO> getRolePermission(Integer roleId);
 
 	AppUser findUserById(Integer userId);
 

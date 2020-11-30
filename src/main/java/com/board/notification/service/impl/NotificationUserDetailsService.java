@@ -3,7 +3,6 @@ package com.board.notification.service.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +29,7 @@ public class NotificationUserDetailsService implements UserDetailsService {
 		} else {
 			try {
 				return new UserSecurityDetails(user.getUserId(), user.getEmail(), user.getPassword(), user.getEmail(), null,
-						AuthorityUtils.commaSeparatedStringToAuthorityList(user.getAuthorities()));
+						user.getPermissions());
 			} catch (Exception e) {
 				LOGGER.error("Exception in getting user by username : ", e);
 			}
