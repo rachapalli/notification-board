@@ -35,7 +35,9 @@ public class AzureBlobAdapter {
 			throw new IOException(NotificationConstants.INVALID_FILE_NAME + name);
 		}
 		File temp = new File("/home/temp/" + name);
-		BlobProperties properties = client.blobName(name).buildClient().downloadToFile(temp.getPath());
+		if (!temp.exists()) {
+			BlobProperties properties = client.blobName(name).buildClient().downloadToFile(temp.getPath());
+		}
 		byte[] content = Files.readAllBytes(Paths.get(temp.getPath()));
 		temp.delete();
 		return content;

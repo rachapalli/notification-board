@@ -32,7 +32,7 @@ public class AzureBlobFileController {
 	@PostMapping(path = "/upload", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public FileDTO uploadFile(@RequestPart(value = "file", required = true) MultipartFile file) throws IOException {
 		String fileKey = azureAdapter.upload(file, "prefix");
-		FileDTO uploadedFile = fileService.saveFile(new FileDTO(file.getName(), fileKey, null, NotificationUtils.getUKTime()));
+		FileDTO uploadedFile = fileService.saveFile(new FileDTO(fileKey, file.getName(), null, NotificationUtils.getUKTime()));
 		return uploadedFile;
 	}
 
