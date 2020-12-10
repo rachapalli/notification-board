@@ -161,6 +161,26 @@ Click on below link to approve.
 
 Thanks
 Notification Borad');
+
+insert into APP_PROPERTIES values ('USER.REGI.EMAIL.BODY','Hi <<USER_NAME>>,
+
+Welcome to Notification Board. Your new account successfully registered. 
+Click on below link to activate.
+
+<<USER_APPR_LINK>>
+');
+
+insert into APP_PROPERTIES values ('BOARD.USER.REGI.EMAIL.SUBJECT','New Member Registration');
+
+insert into APP_PROPERTIES values ('BOARD.USER.REGI.EMAIL.BODY','Hi,
+
+New Board member, <<USER_NAME>> is scuccessfully reigistered to Board <<BNAME>>. 
+
+Thanks
+Notification Borad');
+
+
+
 insert into APP_PROPERTIES values ('USER.REGI.EMAIL.SUBJECT','New Board Member Regisration');
 insert into APP_PROPERTIES values ('USER.REGI.APPR.LINK','https://notification-demo-app.azurewebsites.net/user/activate?key=');
 
@@ -177,3 +197,10 @@ INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_d
 INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,2,1,1,1,1);
 INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,3,1,1,1,1);
 INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,4,1,1,1,1);
+
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,1,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,2,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,3,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,4,1,1,1,1);
+
+alter table all_invitations add group_id INT FOREIGN KEY REFERENCES groups(group_id) ;

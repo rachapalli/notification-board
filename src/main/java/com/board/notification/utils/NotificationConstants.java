@@ -24,8 +24,9 @@ public class NotificationConstants {
 	public static String PH_USER_APPR_LINK = "<<USER_APPR_LINK>>";
 	public static String EMAIL_PATTERN = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
 	public static String DB_PROP_ADMIN_USER_EMAIL_ID = "ADMIN.USER.EMAIL.ID";
-	public static String DB_PROP_USER_REGI_APPR_LINK_ = "USER.REGI.APPR.LINK";
+	public static String DB_PROP_USER_REGI_APPR_LINK = "USER.REGI.APPR.LINK";
 	public static String DB_PROP_USER_REGI_EMAIL_BODY = "USER.REGI.EMAIL.BODY";
 	public static String DB_PROP_USER_REGI_EMAIL_SUBJECT = "USER.REGI.EMAIL.SUBJECT";
-
+	public static String DB_PROP_BOARD_USER_REGI_EMAIL_SUBJECT = "BOARD.USER.REGI.EMAIL.SUBJECT";
+	public static String DB_PROP_BOARD_USER_REGI_EMAIL_BODY = "BOARD.USER.REGI.EMAIL.BODY";
 }

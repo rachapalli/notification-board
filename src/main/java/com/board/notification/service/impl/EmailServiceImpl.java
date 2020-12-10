@@ -1,6 +1,8 @@
 package com.board.notification.service.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -49,6 +51,15 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	@Override
+	public List<EmailStatusDTO> sendEmails(List<EmailDTO> emailDTOs) {
+		List<EmailStatusDTO> emailStatusDTOs = new ArrayList<>();
+		for (EmailDTO emailDTO : emailDTOs) {
+			emailStatusDTOs.add(sendEmail(emailDTO));
+		}
+		return emailStatusDTOs;
+	}
+
+	@Override
 	public void sendEmailWithAttachment(EmailDTO emailDTO) throws MessagingException, IOException {
 		MimeMessage msg = javaMailSender.createMimeMessage();
 		// true = multipart message
@@ -68,6 +79,35 @@ public class EmailServiceImpl implements EmailService {
 
 		javaMailSender.send(msg);
 
+	}
+
+	@Override
+	public EmailStatusDTO sendHtmlEmail(EmailDTO emailDTO) {
+		EmailStatusDTO emailStatus = null;
+		if (!NotificationUtils.isValidEmail(emailDTO.getEmail())) {
+			return new EmailStatusDTO(emailDTO.getEmail(), StatusEnum.FAIL, NotificationConstants.MSG_INVALID_EMAIL);
+		}
+		try {
+			MimeMessage msg = javaMailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(msg, true);
+			helper.setTo(emailDTO.getEmail());
+			helper.setSubject(emailDTO.getSubject());
+			helper.setText(emailDTO.getMessage(), true);
+			javaMailSender.send(msg);
+		} catch (Exception e) {
+			logger.error("Error while sending email to:" + emailDTO.getEmail(), e);
+			emailStatus = new EmailStatusDTO(emailDTO.getEmail(), StatusEnum.FAIL, e.getMessage());
+		}
+		return emailStatus;
+	}
+	
+	@Override
+	public List<EmailStatusDTO> sendHtmlEmails(List<EmailDTO> emailDTOs) {
+		List<EmailStatusDTO> emailStatusDTOs = new ArrayList<>();
+		for (EmailDTO emailDTO : emailDTOs) {
+			emailStatusDTOs.add(sendHtmlEmail(emailDTO));
+		}
+		return emailStatusDTOs;
 	}
 
 }

@@ -26,6 +26,7 @@ import com.board.notification.model.AuthenticationRequest;
 import com.board.notification.model.AuthenticationResponse;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.CommonResponse;
+import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.service.UserService;
 import com.board.notification.service.impl.NotificationUserDetailsService;
 import com.board.notification.utils.NotificationConstants;
@@ -111,6 +112,12 @@ public class UserController {
 		final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 		final String jwt = jwtTokenUtil.generateToken(userDetails);
 		return ResponseEntity.ok(new AuthenticationResponse(jwt, "Login success", userDetails));
+	}
+
+	@PostMapping(value = "/group/approve")
+	public ResponseEntity<CommonResponse> approveGroupUser(@Valid @RequestBody GroupUsersDTO groupUsersDTO) {
+		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_UPDATE_SUCCESS,
+				userService.updateGroupUser(groupUsersDTO)));
 	}
 
 }

@@ -45,6 +45,9 @@ public class NotificationUtils {
 	 * @return true if valid else false
 	 */
 	public static boolean isValidEmail(String email) {
+		if (email == null || email.isEmpty()) {
+			return false;
+		}
 		java.util.regex.Pattern p = java.util.regex.Pattern.compile(NotificationConstants.EMAIL_PATTERN);
 		java.util.regex.Matcher m = p.matcher(email);
 		return m.matches();

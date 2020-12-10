@@ -9,12 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.board.notification.dao.GroupRepo;
+import com.board.notification.dao.UserRepo;
 import com.board.notification.exception.AlreadyExistsException;
 import com.board.notification.exception.DataNotFoundException;
 import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.ActiveStatusEnum;
 import com.board.notification.model.Groups;
+import com.board.notification.model.Users;
 import com.board.notification.model.dto.GroupDTO;
+import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.model.dto.NotificationConverter;
 import com.board.notification.service.GroupService;
 import com.board.notification.utils.NotificationConstants;
@@ -25,6 +28,9 @@ public class GroupServiceImpl implements GroupService {
 
 	@Autowired
 	private GroupRepo groupRepo;
+	
+	@Autowired
+	private UserRepo userRepo;
 
 	@Transactional
 	@Override
@@ -41,7 +47,7 @@ public class GroupServiceImpl implements GroupService {
 		createdGroup = groupRepo.save(groups);
 		if (createdGroup != null) {
 			groupRepo.addGroupUser(groupDTO.getCreatedBy(), createdGroup.getGroupId(), groupDTO.getCreatedBy(),
-						NotificationUtils.getUKTime(), ActiveStatusEnum.ACTIVE.status());
+					NotificationUtils.getUKTime(), ActiveStatusEnum.ACTIVE.status());
 		}
 		groupDTO.setGroupId(createdGroup.getGroupId());
 		return groupDTO;
@@ -103,10 +109,37 @@ public class GroupServiceImpl implements GroupService {
 	public List<GroupDTO> getUserGroups(String emailId) {
 		return NotificationConverter.toGroupDTOs(groupRepo.getAllUserGroupsByEmail(emailId));
 	}
-	
+
 	@Override
 	public List<GroupDTO> getOwnerGroups(String emailId) {
 		return NotificationConverter.toGroupDTOs(groupRepo.getBoardOwnerGroups(emailId));
+	}
+
+	@Override
+	public GroupDTO findByGroupName(String groupName) {
+		if (groupName == null || groupName.isEmpty()) {
+			throw new InvalidRequestException("groupName " + NotificationConstants.MSG_NOT_NULL_EMPTY);
+		}
+		Groups group = groupRepo.findByGroupName(groupName);
+		if (group == null) {
+			throw new DataNotFoundException("Group: " + groupName + NotificationConstants.MSG_NOT_FOUND);
+		}
+		return NotificationConverter.toGroupDto(group);
+	}
+	
+	@Override
+	public List<GroupUsersDTO> getGroupUsers(String email) {
+		Users user = userRepo.findByEmail(email);
+		if (user == null) {
+			throw new DataNotFoundException(NotificationConstants.INVALID_USER_EMAIL);
+		}
+		return groupRepo.getGroupUsers(user.getUserId());
+	}
+	
+	@Override
+	public void addGroupUser(Integer userId, Integer groupId, Integer createdBy, Boolean isActive) {
+		groupRepo.addGroupUser(userId, groupId, createdBy, NotificationUtils.getUKTime(),
+				isActive ? ActiveStatusEnum.ACTIVE.status() : ActiveStatusEnum.INACTIVE.status());
 	}
 
 }

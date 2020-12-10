@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.dto.CommonResponse;
 import com.board.notification.model.dto.GroupDTO;
+import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.service.GroupService;
 import com.board.notification.utils.NotificationConstants;
+import com.board.notification.utils.NotificationUtils;
 
 @RestController
 @RequestMapping("/group")
@@ -57,6 +59,19 @@ public class GroupController {
 					NotificationConstants.KEY_EMAIL + NotificationConstants.MSG_NOT_NULL_EMPTY);
 		}
 		return groupService.getOwnerGroups(userInput.get(NotificationConstants.KEY_EMAIL));
+	}
+	
+	@PostMapping("/getOwnerGroupUsers")
+	public List<GroupUsersDTO> getGroupUsers(@RequestBody Map<String, String> userInput) {
+		if (userInput == null || userInput.isEmpty()) {
+			throw new InvalidRequestException(
+					NotificationConstants.KEY_EMAIL + NotificationConstants.MSG_NOT_NULL_EMPTY);
+		}
+		
+		if (!NotificationUtils.isValidEmail(userInput.get(NotificationConstants.KEY_EMAIL))) {
+			throw new InvalidRequestException(NotificationConstants.MSG_INVALID_EMAIL);
+		}
+		return groupService.getGroupUsers(userInput.get(NotificationConstants.KEY_EMAIL));
 	}
 
 }

@@ -18,6 +18,9 @@ public class BoardInvitation {
 	@NotNull(message = "createdBy cannot be null")
 	private Integer createdBy;
 
+	@NotEmpty(message = "Group name cannot be null or empty")
+	private String groupName;
+
 	public Set<String> getEmailIdList() {
 		return emailIdList;
 	}
@@ -50,10 +53,18 @@ public class BoardInvitation {
 		this.emailSubject = emailSubject;
 	}
 
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
 	@Override
 	public String toString() {
 		return "BoardInvitation [emailIdList=" + emailIdList + ", emailBody=" + emailBody + ", emailSubject="
-				+ emailSubject + ", createdBy=" + createdBy + "]";
+				+ emailSubject + ", createdBy=" + createdBy + ", groupName=" + groupName + "]";
 	}
 
 }

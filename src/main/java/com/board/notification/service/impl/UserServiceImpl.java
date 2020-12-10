@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.board.notification.dao.GroupRepo;
+import com.board.notification.dao.InvitationsRepo;
 import com.board.notification.dao.PermissionRepo;
 import com.board.notification.dao.RolesRepo;
 import com.board.notification.dao.UserRepo;
@@ -24,6 +25,8 @@ import com.board.notification.model.UserTypeEnum;
 import com.board.notification.model.Users;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.EmailDTO;
+import com.board.notification.model.dto.GroupUsersDTO;
+import com.board.notification.model.dto.InvitationDetailsDTO;
 import com.board.notification.model.dto.PermissionDTO;
 import com.board.notification.service.EmailService;
 import com.board.notification.service.UserService;
@@ -47,10 +50,14 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private GroupRepo groupRepo;
-	
+
+	@Autowired
+	private InvitationsRepo invitationsRepo;
+
 	@Autowired
 	private Environment env;
-	
+
+	@Transactional
 	@Override
 	public AppUser createUser(AppUser appUser) {
 		if (appUser.getUserId() != null) {
@@ -65,36 +72,38 @@ public class UserServiceImpl implements UserService {
 			throw new DataNotFoundException("Role " + appUser.getUserType() + NotificationConstants.MSG_NOT_FOUND);
 		}
 
-		EmailDTO emailDTO = new EmailDTO();
-		
-		if (UserTypeEnum.MEMBER.equals(appUser.getUserType())) {
-			if (appUser.getGroupName() == null || appUser.getGroupName().isEmpty()) {
-				throw new InvalidRequestException("For User type Member group name is mandatory");
-			}
-			Groups group = groupRepo.findByGroupName(appUser.getGroupName());
-			if (group == null) {
-				throw new InvalidRequestException(
-						"Group " + appUser.getGroupName() + NotificationConstants.MSG_NOT_FOUND);
-			}
-			AppUser groupOwner = findUserById(group.getCreatedBy());
-			emailDTO.setEmail(groupOwner.getEmail());
-			emailDTO.setMessage(prepareUserRegBody(appUser.getUserName(), group.getGroupName(), appUser.getEmail()));
-		} else 
-		
-		if (UserTypeEnum.BOARD_OWNER.equals(appUser.getUserType())) {
-			emailDTO.setEmail(env.getProperty(NotificationConstants.DB_PROP_ADMIN_USER_EMAIL_ID));
-			emailDTO.setMessage(prepareUserRegBody(appUser.getUserName(), "", appUser.getEmail()));
-		}
-		emailDTO.setSubject(env.getProperty(NotificationConstants.DB_PROP_USER_REGI_EMAIL_SUBJECT));
-				
 		user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
 		user.setRoleId(userRole.getRoleId());
 		Users savedUser = userRepo.save(user);
 		appUser.setUserId(savedUser.getUserId());
-		emailService.sendEmail(emailDTO);
+
+		List<EmailDTO> emailDTOs = new ArrayList<>();
+		emailDTOs.add(
+				new EmailDTO(appUser.getEmail(), env.getProperty(NotificationConstants.DB_PROP_USER_REGI_EMAIL_SUBJECT),
+						prepareUserRegistrationBody(appUser.getUserName(), appUser.getEmail())));
+
+		if (UserTypeEnum.MEMBER.equals(appUser.getUserType())) {
+			List<InvitationDetailsDTO> allInvitedBoardDetails = invitationsRepo
+					.getAllInvitedBoardDetails(user.getEmail());
+			for (InvitationDetailsDTO invitationDetailsDTO : allInvitedBoardDetails) {
+				invitationDetailsDTO.getBoardOwnerEmail();
+				invitationDetailsDTO.getInvitedGroupId();
+				emailDTOs.add(new EmailDTO(invitationDetailsDTO.getBoardOwnerEmail(),
+						env.getProperty(NotificationConstants.DB_PROP_BOARD_USER_REGI_EMAIL_SUBJECT),
+						prepareBoardUserRegistrationBody(user.getUserName(), invitationDetailsDTO.getInvitedGroupName())));
+				
+				groupRepo.addGroupUser(appUser.getUserId(), invitationDetailsDTO.getInvitedGroupId(),
+						appUser.getUserId(), NotificationUtils.getUKTime(), ActiveStatusEnum.INACTIVE.status());
+			}
+		} else
+
+		if (UserTypeEnum.BOARD_OWNER.equals(appUser.getUserType())) {
+		}
+
+		emailService.sendEmails(emailDTOs);
 		return appUser;
 	}
-	
+
 	@Override
 	public AppUser updateUser(AppUser appUser) {
 		if (appUser.getUserId() == null) {
@@ -117,7 +126,7 @@ public class UserServiceImpl implements UserService {
 		userRepo.save(dbUser);
 		return appUser;
 	}
-	
+
 	@Override
 	public boolean deleteUser(String email) {
 		boolean status = false;
@@ -205,7 +214,7 @@ public class UserServiceImpl implements UserService {
 	public List<PermissionDTO> getRolePermission(Integer roleId) {
 		return permissionRepo.findRolePermissionsByRoleId(roleId);
 	}
-	
+
 	@Override
 	public AppUser findUserById(Integer userId) {
 		if (userId == null) {
@@ -220,13 +229,34 @@ public class UserServiceImpl implements UserService {
 		return appUser;
 	}
 	
-	private String prepareUserRegBody(String userName, String groupName, String email) {
+	@Override
+	public Integer updateGroupUser(GroupUsersDTO groupUsersDTO) {
+		Users groupUser = userRepo.findByEmail(groupUsersDTO.getUserEmail());
+		if (groupUser == null) {
+			throw new DataNotFoundException("User " + NotificationConstants.MSG_NOT_FOUND);
+		}
+
+		Groups group = groupRepo.findByGroupName(groupUsersDTO.getGroupName());
+		if (group == null) {
+			throw new DataNotFoundException("Group " + NotificationConstants.MSG_NOT_FOUND);
+		}
+		return userRepo.updateGroupUser(groupUser.getUserId(), group.getGroupId(),
+				groupUsersDTO.getIsActive() ? ActiveStatusEnum.ACTIVE.status() : ActiveStatusEnum.INACTIVE.status());
+	}
+	
+	private String prepareUserRegistrationBody(String userName, String email) {
 		String message = new String(env.getProperty(NotificationConstants.DB_PROP_USER_REGI_EMAIL_BODY));
-		message = message.replace(NotificationConstants.PH_BNAME, groupName)
-				.replace(NotificationConstants.PH_USER_APPR_LINK,
-						env.getProperty(NotificationConstants.DB_PROP_USER_REGI_APPR_LINK_)
-								+ NotificationUtils.encodeString(email))
-				.replace(NotificationConstants.PH_USER_NAME, userName);
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
+				NotificationConstants.PH_USER_APPR_LINK,
+				env.getProperty(NotificationConstants.DB_PROP_USER_REGI_APPR_LINK)
+						+ NotificationUtils.encodeString(email));
+		return message;
+	}
+	
+	private String prepareBoardUserRegistrationBody(String userName, String groupName) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_BOARD_USER_REGI_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(NotificationConstants.PH_BNAME,
+				groupName);
 		return message;
 	}
 
