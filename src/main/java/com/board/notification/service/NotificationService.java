@@ -8,7 +8,7 @@ import com.board.notification.model.dto.NotificationDTO;
 
 public interface NotificationService {
 
-	List<GroupNotificationDTO> getGroupNotification(String groupName);
+	List<GroupNotificationDTO> getGroupNotification(Integer groupId);
 
 	GroupNotificationDTO saveGroupNotification(GroupNotificationDTO groupNotification);
 

@@ -141,5 +141,17 @@ public class GroupServiceImpl implements GroupService {
 		groupRepo.addGroupUser(userId, groupId, createdBy, NotificationUtils.getUKTime(),
 				isActive ? ActiveStatusEnum.ACTIVE.status() : ActiveStatusEnum.INACTIVE.status());
 	}
+	
+	@Override
+	public GroupDTO getGroupByName(String groupName) {
+		if (groupName == null || groupName.isEmpty()) {
+			throw new InvalidRequestException(NotificationConstants.REQUIRED_MSG + "groupName");
+		}
+		Groups group = groupRepo.findByGroupName(groupName);
+		if (group == null) {
+			throw new DataNotFoundException("Group not found with name:" + groupName);
+		}
+		return NotificationConverter.toGroupDto(group);
+	}
 
 }

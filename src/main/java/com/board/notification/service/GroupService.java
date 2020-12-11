@@ -25,4 +25,6 @@ public interface GroupService {
 	List<GroupUsersDTO> getGroupUsers(String email);
 
 	void addGroupUser(Integer userId, Integer groupId, Integer createdBy, Boolean isActive);
+	
+	GroupDTO getGroupByName(String groupName);
 }
