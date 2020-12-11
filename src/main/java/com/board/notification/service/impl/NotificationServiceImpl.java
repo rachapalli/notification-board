@@ -49,19 +49,11 @@ public class NotificationServiceImpl implements NotificationService {
 	private UserRepo userRepo;
 
 	@Override
-	public List<GroupNotificationDTO> getGroupNotification(String groupName) {
-		if (groupName == null || groupName.isEmpty()) {
-			throw new InvalidRequestException(NotificationConstants.REQUIRED_MSG + "groupName");
-		}
-		Groups group = groupRepo.findByGroupName(groupName);
-		if (group == null) {
-			throw new DataNotFoundException("Group not found with name:" + groupName);
-		}
-
+	public List<GroupNotificationDTO> getGroupNotification(Integer groupId) {
 		List<FileGroupNotification> fileGroupNotifications = notificationsRepo
-				.getFileGroupNotifications(group.getGroupId());
+				.getFileGroupNotifications(groupId);
 		List<MessageGroupNotification> messageGroupNotifications = notificationsRepo
-				.getMessageGroupNotifications(group.getGroupId());
+				.getMessageGroupNotifications(groupId);
 
 		List<GroupNotificationDTO> groupNotifications = NotificationConverter
 				.toGroupNotifications(messageGroupNotifications);
