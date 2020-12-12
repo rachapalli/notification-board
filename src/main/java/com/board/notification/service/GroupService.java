@@ -5,7 +5,6 @@ import java.util.List;
 import com.board.notification.model.dto.GroupDTO;
 import com.board.notification.model.dto.GroupUsersDTO;
 
-
 public interface GroupService {
 
 	List<GroupDTO> getAllGroups();
@@ -25,6 +24,8 @@ public interface GroupService {
 	List<GroupUsersDTO> getGroupUsers(String email);
 
 	void addGroupUser(Integer userId, Integer groupId, Integer createdBy, Boolean isActive);
-	
+
 	GroupDTO getGroupByName(String groupName);
+
+	boolean checkUserGroupAccess(String userEmail, Integer groupId);
 }

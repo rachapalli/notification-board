@@ -28,4 +28,7 @@ public interface GroupRepo extends CrudRepository<Groups, Integer> {
 	
 	@Query(value = "select u.email as user_email, u.user_name, g.group_name, ug.is_active from user_groups ug, users u, groups g where u.user_id = ug.user_id and ug.group_id = g.group_id and g.created_by=:userId")
 	public List<GroupUsersDTO> getGroupUsers(Integer userId);
+	
+	@Query(value = "select count(*) from user_groups ug, users u, groups g where ug.group_id=g.group_id and ug.user_id = u.user_id and ug.is_active=1 and u.email = :userEmail and g.group_id=:groupId")
+	public Integer checkUserGroupAccess(@Param("userEmail") String userEmail, @Param("groupId") Integer groupId);
 }
