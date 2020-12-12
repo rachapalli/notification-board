@@ -16,9 +16,11 @@ public class NotificationConstants {
 	public static String MSG_INVALID_EMAIL = "Invalid email address";
 	public static String MSG_LOGIN_RQRD = "Login Required to access private group";
 	public static String MSG_GROUP_ACCESS = "User doesn't has access to this Group";
+	public static String MSG_EMAIL_REQUIRED = "email cannot be null or empty";
 	public static String INVALID_FILE_NAME = "Invalid File Name";
 	public static String INVALID_USER_EMAIL = "Invalid User Email/Not found";
 	public static String KEY_EMAIL = "email";
+	public static String KEY_NTYEPE = "notificationType";
 	public static String PH_RNAME = "<<RNAME>>";
 	public static String PH_BNAME = "<<BNAME>>";
 	public static String PH_BOARD_LINK = "<<BOARD_LINK>>";

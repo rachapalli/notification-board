@@ -21,6 +21,7 @@ import com.board.notification.model.dto.BoardInvitation;
 import com.board.notification.model.dto.EmailDTO;
 import com.board.notification.model.dto.EmailStatusDTO;
 import com.board.notification.model.dto.GroupDTO;
+import com.board.notification.model.dto.InvitationDTO;
 import com.board.notification.model.dto.InvitationDetailsDTO;
 import com.board.notification.service.EmailService;
 import com.board.notification.service.GroupService;
@@ -78,7 +79,7 @@ public class InvitationServiceImpl implements InvitationService {
 		Set<String> emailIdList = boardInvitation.getEmailIdList();
 		List<EmailStatusDTO> emailStatusDTOs = new ArrayList<>(emailIdList.size());
 		for (String emailId : emailIdList) {
-			emailStatusDTOs.add(emailService.sendEmail(
+			emailStatusDTOs.add(emailService.sendHtmlEmail(
 					new EmailDTO(emailId, boardInvitation.getEmailSubject(), boardInvitation.getEmailBody())));
 		}
 		persistInvitation(boardInvitation, emailStatusDTOs);
@@ -92,4 +93,11 @@ public class InvitationServiceImpl implements InvitationService {
 		}
 		return invitationsRepo.getAllInvitedBoardDetails(emailId);
 	}
+	
+	@Override
+	public List<InvitationDTO> getUserCreatedInvitations(String userEmail) {
+		return invitationsRepo.getUserCreatedInvitations(userEmail);
+	}
+	
+	
 }

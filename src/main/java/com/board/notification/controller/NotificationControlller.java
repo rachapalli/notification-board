@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.AuthenticationResponse;
+import com.board.notification.model.NotificationType;
 import com.board.notification.model.dto.CommonResponse;
 import com.board.notification.model.dto.DeleteGroupNotificationDTO;
 import com.board.notification.model.dto.GroupDTO;
@@ -84,9 +85,21 @@ public class NotificationControlller {
 
 	@PostMapping("/getUserGroupNotifications")
 	public List<GroupNotificationDTO> getUserGroupNotifications(@RequestBody Map<String, String> input) {
-		if (input == null || input.isEmpty() || input.get(NotificationConstants.KEY_EMAIL) == null) {
-			throw new InvalidRequestException("Email is mandatory");
+		NotificationType notificationType = null;
+		if (input == null || input.isEmpty() ) { 
+			if(input.get(NotificationConstants.KEY_EMAIL) == null) {
+				throw new InvalidRequestException(NotificationConstants.MSG_EMAIL_REQUIRED);
+			}
+		} else {
+			if (input.get(NotificationConstants.KEY_NTYEPE) != null) {
+				notificationType = NotificationType.decode(input.get(NotificationConstants.KEY_NTYEPE));
+				if (notificationType == null) {
+					throw new InvalidRequestException(NotificationConstants.KEY_NTYEPE + " value should be FILE or TEXT");
+				}
+			}
 		}
-		return notificationService.getUserGroupNotifications(input.get(NotificationConstants.KEY_EMAIL));
+		
+		
+		return notificationService.getUserGroupNotifications(input.get(NotificationConstants.KEY_EMAIL), notificationType);
 	}
 }

@@ -30,8 +30,6 @@ public class AppUser {
 	@NotNull(message = "User Type is mandatory")
 	private UserTypeEnum userType;
 
-	private String groupName;
-
 	private Date createdDate;
 	private Date updatedDate;
 
@@ -94,14 +92,6 @@ public class AppUser {
 		this.userType = userType;
 	}
 
-	public String getGroupName() {
-		return groupName;
-	}
-
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -134,22 +124,16 @@ public class AppUser {
 		this.isActive = isActive;
 	}
 
-    public String getAuthorities() {
-        return null;
-    }
-    
+	public String getAuthorities() {
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		return "AppUser [userId=" + userId + ", userName=" + userName + ", password=" + password + ", email=" + email
 				+ ", alternateEmail=" + alternateEmail + ", contactNumber=" + contactNumber + ", userType=" + userType
-				+ ", groupName=" + groupName + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate
-				+ ", permissions=" + permissions + ", isActive=" + isActive + ", getUserId()=" + getUserId()
-				+ ", getUserName()=" + getUserName() + ", getPassword()=" + getPassword() + ", getEmail()=" + getEmail()
-				+ ", getAlternateEmail()=" + getAlternateEmail() + ", getContactNumber()=" + getContactNumber()
-				+ ", getUserType()=" + getUserType() + ", getGroupName()=" + getGroupName() + ", getCreatedDate()="
-				+ getCreatedDate() + ", getUpdatedDate()=" + getUpdatedDate() + ", getPermissions()=" + getPermissions()
-				+ ", getIsActive()=" + getIsActive() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ ", toString()=" + super.toString() + "]";
+				+ ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", permissions=" + permissions
+				+ ", isActive=" + isActive + "]";
 	}
 
 }
