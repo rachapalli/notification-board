@@ -16,4 +16,5 @@ public interface UserRepo extends CrudRepository<Users, Integer> {
 	@Query(value = "update user_groups set is_active = :isActive where user_id = :userId and group_id = :groupId")
 	public Integer updateGroupUser(@Param("userId") Integer userId, @Param("groupId") Integer groupId,
 			@Param("isActive") Integer isActive);
+	
 }

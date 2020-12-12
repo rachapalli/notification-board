@@ -10,6 +10,10 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Locale;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+
 public class NotificationUtils {
 
 	public static String encodeString(String input) {
@@ -51,5 +55,11 @@ public class NotificationUtils {
 		java.util.regex.Pattern p = java.util.regex.Pattern.compile(NotificationConstants.EMAIL_PATTERN);
 		java.util.regex.Matcher m = p.matcher(email);
 		return m.matches();
+	}
+	
+	public static String getLoginUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserDetails userDetail = (UserDetails) authentication.getPrincipal();
+		return userDetail.getUsername();
 	}
 }

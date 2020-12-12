@@ -154,4 +154,9 @@ public class GroupServiceImpl implements GroupService {
 		return NotificationConverter.toGroupDto(group);
 	}
 
+	@Override
+	public boolean checkUserGroupAccess(String userEmail, Integer groupId) {
+		return groupRepo.checkUserGroupAccess(userEmail, groupId) > 0 ? true : false; 
+	}
+
 }

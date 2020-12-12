@@ -26,6 +26,7 @@ import com.board.notification.model.dto.NotificationDTO;
 import com.board.notification.service.GroupService;
 import com.board.notification.service.NotificationService;
 import com.board.notification.utils.NotificationConstants;
+import com.board.notification.utils.NotificationUtils;
 
 @RestController
 @RequestMapping("/notification")
@@ -41,8 +42,19 @@ public class NotificationControlller {
 	public ResponseEntity<?> getNotifications(@PathVariable(name = "groupName") String groupName,
 			@RequestHeader(name = "Authorization", required = false) String token) {
 		GroupDTO groupDTO = groupService.getGroupByName(groupName);
+		if (groupDTO == null) {
+			return new ResponseEntity<>(new CommonResponse("Group " + groupName + NotificationConstants.MSG_NOT_FOUND),
+					HttpStatus.NOT_FOUND);
+		}
 		if (!groupDTO.getIsPublic() && (token == null || token.isEmpty())) {
-			return new ResponseEntity<>("Token Required to Access private group", HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(new CommonResponse(NotificationConstants.MSG_LOGIN_RQRD),
+					HttpStatus.UNAUTHORIZED);
+		} else {
+			String loginUser = NotificationUtils.getLoginUser();
+			if (!groupService.checkUserGroupAccess(loginUser, groupDTO.getGroupId())) {
+				return new ResponseEntity<>(new CommonResponse(NotificationConstants.MSG_GROUP_ACCESS),
+						HttpStatus.UNAUTHORIZED);
+			}
 		}
 		return ResponseEntity.ok(notificationService.getGroupNotification(groupDTO.getGroupId()));
 	}
