@@ -166,18 +166,31 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public List<GroupNotificationDTO> getUserGroupNotifications(String userEmail) {
+	public List<GroupNotificationDTO> getUserGroupNotifications(String userEmail, NotificationType notificationType) {
 		Users user = userRepo.findByEmail(userEmail);
 		if (user == null) {
 			throw new DataNotFoundException(NotificationConstants.INVALID_USER_EMAIL);
 		}
-		List<MessageGroupNotification> userMessageGroupNotifications = notificationsRepo
-				.getUserMessageGroupNotifications(user.getUserId());
-		List<FileGroupNotification> userFileGroupNotifications = notificationsRepo
-				.getUserFileGroupNotifications(user.getUserId());
-		List<GroupNotificationDTO> groupUserNotifications = NotificationConverter
-				.toGroupNotifications(userMessageGroupNotifications);
-		groupUserNotifications.addAll(NotificationConverter.toGroupNotificationdDtos(userFileGroupNotifications));
+		List<GroupNotificationDTO> groupUserNotifications = null;
+		
+		if (NotificationType.TEXT.equals(notificationType)) {
+			List<MessageGroupNotification> userMessageGroupNotifications = notificationsRepo
+					.getUserMessageGroupNotifications(user.getUserId());
+			groupUserNotifications = NotificationConverter.toGroupNotifications(userMessageGroupNotifications);
+			
+		} else if (NotificationType.FILE.equals(notificationType)) {
+			List<FileGroupNotification> userFileGroupNotifications = notificationsRepo
+					.getUserFileGroupNotifications(user.getUserId());
+			groupUserNotifications = NotificationConverter.toGroupNotificationdDtos(userFileGroupNotifications);
+			
+		} else {
+			List<MessageGroupNotification> userMessageGroupNotifications = notificationsRepo
+					.getUserMessageGroupNotifications(user.getUserId());
+			List<FileGroupNotification> userFileGroupNotifications = notificationsRepo
+					.getUserFileGroupNotifications(user.getUserId());
+			groupUserNotifications = NotificationConverter.toGroupNotifications(userMessageGroupNotifications);
+			groupUserNotifications.addAll(NotificationConverter.toGroupNotificationdDtos(userFileGroupNotifications));
+		}
 		return groupUserNotifications;
 	}
 

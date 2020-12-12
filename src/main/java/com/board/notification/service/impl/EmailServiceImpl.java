@@ -94,6 +94,7 @@ public class EmailServiceImpl implements EmailService {
 			helper.setSubject(emailDTO.getSubject());
 			helper.setText(emailDTO.getMessage(), true);
 			javaMailSender.send(msg);
+			emailStatus = new EmailStatusDTO(emailDTO.getEmail(), StatusEnum.SUCCESS);
 		} catch (Exception e) {
 			logger.error("Error while sending email to:" + emailDTO.getEmail(), e);
 			emailStatus = new EmailStatusDTO(emailDTO.getEmail(), StatusEnum.FAIL, e.getMessage());

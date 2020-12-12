@@ -188,19 +188,26 @@ insert into APP_PROPERTIES values ('ADMIN.USER.EMAIL.ID','notificationboard1@gma
 
 alter table users drop COLUMN created_by,updated_by;
 
-insert into component(name) VALUES ('BOARD_ADD');
-insert into component(name) VALUES ('BOARD_DELETE');
-insert into component(name) VALUES ('BOARD_EDIT');
-insert into component(name) VALUES ('BOARD_VIEW');
+insert into component(name) VALUES ('BOARD');
+insert into component(name) VALUES ('INVITATION');
+insert into component(name) VALUES ('INVITATION_LIST');
+insert into component(name) VALUES ('INVITATION_APPROVALS');
+insert into component(name) VALUES ('NOTIFICATIONS');
 
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,1,1,1,1);
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,2,1,1,1,1);
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,3,1,1,1,1);
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,4,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,5,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,6,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,7,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,8,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,9,1,1,1,1);
 
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,1,1,1,1,1);
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,2,1,1,1,1);
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,3,1,1,1,1);
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,4,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,5,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,6,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,7,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,8,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,9,1,1,1,1);
+
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (5,9,0,0,1,0);
 
 alter table all_invitations add group_id INT FOREIGN KEY REFERENCES groups(group_id) ;
+
+alter table all_files drop COLUMN name;

@@ -11,6 +11,7 @@ public class GroupUsersDTO {
 	private String groupName;
 	@NotNull(message = "isActive cannot be null")
 	private Boolean isActive;
+	private Boolean isPublic;
 
 	public String getUserEmail() {
 		return userEmail;
@@ -44,10 +45,18 @@ public class GroupUsersDTO {
 		this.isActive = isActive;
 	}
 
+	public Boolean getIsPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(Boolean isPublic) {
+		this.isPublic = isPublic;
+	}
+
 	@Override
 	public String toString() {
 		return "GroupUsersDTO [userEmail=" + userEmail + ", userName=" + userName + ", groupName=" + groupName
-				+ ", isActive=" + isActive + "]";
+				+ ", isActive=" + isActive + ", isPublic=" + isPublic + "]";
 	}
 
 }
