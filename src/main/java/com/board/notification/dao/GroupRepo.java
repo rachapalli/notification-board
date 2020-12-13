@@ -20,10 +20,10 @@ public interface GroupRepo extends CrudRepository<Groups, Integer> {
 	public void addGroupUser(@Param("userId") Integer userId, @Param("groupId") Integer groupId,
 			@Param("createdBy") Integer createdBy, @Param("createdDate") Date createdDate, @Param("isActive") Integer isActive);
 
-	@Query(value = "select g.* from user_groups ug, users u, groups g where ug.user_id=u.user_id and ug.group_id=g.group_id and u.email= :emailId")
+	@Query(value = "select g.* from user_groups ug, users u, groups g where ug.user_id=u.user_id and ug.group_id=g.group_id and g.is_active=1 and u.email= :emailId")
 	public List<Groups> getAllUserGroupsByEmail(@Param("emailId") String emailId);
 
-	@Query(value = "select g.* from user_groups ug, users u, groups g where ug.user_id=u.user_id and ug.group_id=g.group_id and u.email= :emailId")
+	@Query(value = "select g.* from user_groups ug, users u, groups g where ug.user_id=u.user_id and ug.group_id=g.group_id and g.is_active=1 and u.email= :emailId")
 	public List<Groups> getBoardOwnerGroups(@Param("emailId") String emailId);
 	
 	@Query(value = "select u.email as user_email, u.user_name, g.group_name, ug.is_active, g.is_public from user_groups ug, users u, groups g where u.user_id = ug.user_id and ug.group_id = g.group_id and g.created_by=:userId")

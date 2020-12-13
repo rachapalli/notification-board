@@ -44,17 +44,17 @@ public class NotificationControlller {
 			@RequestHeader(name = "Authorization", required = false) String token) {
 		GroupDTO groupDTO = groupService.getGroupByName(groupName);
 		if (groupDTO == null) {
-			return new ResponseEntity<>(new CommonResponse("Group " + groupName + NotificationConstants.MSG_NOT_FOUND),
-					HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new CommonResponse("Group " + groupName + NotificationConstants.MSG_NOT_FOUND), HttpStatus.NOT_FOUND);
+		} else if (!groupDTO.getIsActive()) {
+			return new ResponseEntity<>(new CommonResponse("Group " + groupName + NotificationConstants.MSG_INACTIVE), HttpStatus.FORBIDDEN);
 		}
-		if (!groupDTO.getIsPublic() && (token == null || token.isEmpty())) {
-			return new ResponseEntity<>(new CommonResponse(NotificationConstants.MSG_LOGIN_RQRD),
-					HttpStatus.UNAUTHORIZED);
-		} else {
+		if (!groupDTO.getIsPublic()) {
+			if (token == null || token.isEmpty()) {
+				return new ResponseEntity<>(new CommonResponse(NotificationConstants.MSG_LOGIN_RQRD), HttpStatus.UNAUTHORIZED);
+			}
 			String loginUser = NotificationUtils.getLoginUser();
 			if (!groupService.checkUserGroupAccess(loginUser, groupDTO.getGroupId())) {
-				return new ResponseEntity<>(new CommonResponse(NotificationConstants.MSG_GROUP_ACCESS),
-						HttpStatus.UNAUTHORIZED);
+				return new ResponseEntity<>(new CommonResponse(NotificationConstants.MSG_GROUP_ACCESS), HttpStatus.UNAUTHORIZED);
 			}
 		}
 		return ResponseEntity.ok(notificationService.getGroupNotification(groupDTO.getGroupId()));
