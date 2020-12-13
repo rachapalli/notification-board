@@ -17,7 +17,7 @@ public interface InvitationsRepo extends CrudRepository<Invitations, Integer> {
 	@Query(value = "select ite.invitee_name, ite.email,its.subject, its.message, ai.status, ai.status_msg, ai.created_by, ai.created_date, u.user_name from all_invitations ai, invitee ite, invitations its, users u where ai.invitation_id=its.invitation_id and ai.invitee_id=ite.invitee_id and u.user_id=ai.created_by")
 	public List<Invitation> getAllInvitation();
 	
-	@Query(value = "select ite.email as invitee_email ,its.subject, its.message, ai.status, ai.status_msg, ai.created_date, g.group_name from all_invitations ai, invitee ite, invitations its, users u, groups g where ai.invitation_id=its.invitation_id and ai.invitee_id=ite.invitee_id and u.user_id=ai.created_by and g.group_id= ai.group_id and u.email=:email")
+	@Query(value = "select ite.email as invitee_email ,its.subject, its.message, ai.status, ai.status_msg, ai.created_date, g.group_name, g.is_public from all_invitations ai, invitee ite, invitations its, users u, groups g where ai.invitation_id=its.invitation_id and ai.invitee_id=ite.invitee_id and u.user_id=ai.created_by and g.group_id= ai.group_id and u.email=:email")
 	public List<InvitationDTO> getUserCreatedInvitations(@Param("email") String email);
 
 	@Modifying
