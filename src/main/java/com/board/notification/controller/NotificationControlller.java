@@ -100,6 +100,6 @@ public class NotificationControlller {
 		}
 		
 		
-		return notificationService.getUserGroupNotifications(input.get(NotificationConstants.KEY_EMAIL), notificationType);
+		return notificationService.getAllUserGroupNotifications(input.get(NotificationConstants.KEY_EMAIL), notificationType);
 	}
 }

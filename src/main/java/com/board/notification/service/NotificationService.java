@@ -13,10 +13,10 @@ public interface NotificationService {
 
 	GroupNotificationDTO saveGroupNotification(GroupNotificationDTO groupNotification);
 
-	List<GroupNotificationDTO> getUserGroupNotifications(String userEmail, NotificationType notificationType);
-
 	NotificationDTO updateNotification(NotificationDTO notificationDTO);
 
 	void deleteNotification(DeleteGroupNotificationDTO deleteGroupNotification);
+
+	List<GroupNotificationDTO> getAllUserGroupNotifications(String userEmail, NotificationType notificationType);
 
 }
