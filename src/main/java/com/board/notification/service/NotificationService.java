@@ -2,9 +2,9 @@ package com.board.notification.service;
 
 import java.util.List;
 
-import com.board.notification.model.NotificationType;
 import com.board.notification.model.dto.DeleteGroupNotificationDTO;
 import com.board.notification.model.dto.GroupNotificationDTO;
+import com.board.notification.model.dto.GroupNotificationSearchDTO;
 import com.board.notification.model.dto.NotificationDTO;
 
 public interface NotificationService {
@@ -17,6 +17,6 @@ public interface NotificationService {
 
 	void deleteNotification(DeleteGroupNotificationDTO deleteGroupNotification);
 
-	List<GroupNotificationDTO> getAllUserGroupNotifications(String userEmail, NotificationType notificationType);
+	List<GroupNotificationDTO> getAllUserGroupNotifications(GroupNotificationSearchDTO groupNotificationSearchDTO);
 
 }
