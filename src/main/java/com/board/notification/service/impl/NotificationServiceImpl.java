@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.board.notification.dao.GroupRepo;
 import com.board.notification.dao.NotificationMessageRepo;
 import com.board.notification.dao.NotificationsRepo;
-import com.board.notification.dao.UserRepo;
 import com.board.notification.exception.DataNotFoundException;
 import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.exception.NotificationException;
@@ -22,7 +21,8 @@ import com.board.notification.model.MessageGroupNotification;
 import com.board.notification.model.NotificationMessage;
 import com.board.notification.model.NotificationType;
 import com.board.notification.model.Notifications;
-import com.board.notification.model.Users;
+import com.board.notification.model.UserTypeEnum;
+import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.DeleteGroupNotificationDTO;
 import com.board.notification.model.dto.FileDTO;
 import com.board.notification.model.dto.GroupNotificationDTO;
@@ -30,6 +30,7 @@ import com.board.notification.model.dto.MessageDTO;
 import com.board.notification.model.dto.NotificationConverter;
 import com.board.notification.model.dto.NotificationDTO;
 import com.board.notification.service.NotificationService;
+import com.board.notification.service.UserService;
 import com.board.notification.utils.NotificationConstants;
 import com.board.notification.utils.NotificationUtils;
 
@@ -46,7 +47,7 @@ public class NotificationServiceImpl implements NotificationService {
 	private GroupRepo groupRepo;
 
 	@Autowired
-	private UserRepo userRepo;
+	private UserService userService;
 
 	@Override
 	public List<GroupNotificationDTO> getGroupNotification(Integer groupId) {
@@ -164,35 +165,66 @@ public class NotificationServiceImpl implements NotificationService {
 		notificationsRepo.save(notifications);
 		return notificationDTO;
 	}
-
+	
 	@Override
-	public List<GroupNotificationDTO> getUserGroupNotifications(String userEmail, NotificationType notificationType) {
-		Users user = userRepo.findByEmail(userEmail);
+	public List<GroupNotificationDTO> getAllUserGroupNotifications(String userEmail, NotificationType notificationType) {
+		AppUser user = userService.getUserByEmail(userEmail);
 		if (user == null) {
 			throw new DataNotFoundException(NotificationConstants.INVALID_USER_EMAIL);
 		}
 		List<GroupNotificationDTO> groupUserNotifications = null;
+		if (UserTypeEnum.MEMBER.equals(user.getUserType())) {
+			groupUserNotifications = getUserGroupNotifications(user.getUserId(), notificationType);
+		} else {
+			groupUserNotifications = getUserCreatedGroupNotifications(user.getUserId(), notificationType);
+		}
+		return groupUserNotifications;
+	}
+
+	public List<GroupNotificationDTO> getUserCreatedGroupNotifications(Integer userId, NotificationType notificationType) {
+		List<GroupNotificationDTO> groupUserNotifications = null;
 		
 		if (NotificationType.TEXT.equals(notificationType)) {
 			List<MessageGroupNotification> userMessageGroupNotifications = notificationsRepo
-					.getUserMessageGroupNotifications(user.getUserId());
+					.getUserCreatedMessageGroupNotifications(userId);
 			groupUserNotifications = NotificationConverter.toGroupNotifications(userMessageGroupNotifications);
 			
 		} else if (NotificationType.FILE.equals(notificationType)) {
 			List<FileGroupNotification> userFileGroupNotifications = notificationsRepo
-					.getUserFileGroupNotifications(user.getUserId());
+					.getUserCreatedFileGroupNotifications(userId);
 			groupUserNotifications = NotificationConverter.toGroupNotificationdDtos(userFileGroupNotifications);
 			
 		} else {
 			List<MessageGroupNotification> userMessageGroupNotifications = notificationsRepo
-					.getUserMessageGroupNotifications(user.getUserId());
+					.getUserCreatedMessageGroupNotifications(userId);
 			List<FileGroupNotification> userFileGroupNotifications = notificationsRepo
-					.getUserFileGroupNotifications(user.getUserId());
+					.getUserCreatedFileGroupNotifications(userId);
 			groupUserNotifications = NotificationConverter.toGroupNotifications(userMessageGroupNotifications);
 			groupUserNotifications.addAll(NotificationConverter.toGroupNotificationdDtos(userFileGroupNotifications));
 		}
 		return groupUserNotifications;
 	}
+	
+	public List<GroupNotificationDTO> getUserGroupNotifications(Integer userId, NotificationType notificationType) {
+		List<GroupNotificationDTO> groupUserNotifications = null;
+		
+		if (NotificationType.TEXT.equals(notificationType)) {
+			List<MessageGroupNotification> userMessageGroupNotifications = notificationsRepo.getUserMessageGroupNotifications(userId);
+			groupUserNotifications = NotificationConverter.toGroupNotifications(userMessageGroupNotifications);
+			
+		} else if (NotificationType.FILE.equals(notificationType)) {
+			List<FileGroupNotification> userFileGroupNotifications = notificationsRepo.getUserFileGroupNotifications(userId);
+			groupUserNotifications = NotificationConverter.toGroupNotificationdDtos(userFileGroupNotifications);
+			
+		} else {
+			List<MessageGroupNotification> userMessageGroupNotifications = notificationsRepo.getUserMessageGroupNotifications(userId);
+			List<FileGroupNotification> userFileGroupNotifications = notificationsRepo.getUserFileGroupNotifications(userId);
+			groupUserNotifications = NotificationConverter.toGroupNotifications(userMessageGroupNotifications);
+			groupUserNotifications.addAll(NotificationConverter.toGroupNotificationdDtos(userFileGroupNotifications));
+		}
+		return groupUserNotifications;
+	}
+	
 
 	@Override
 	@Transactional
