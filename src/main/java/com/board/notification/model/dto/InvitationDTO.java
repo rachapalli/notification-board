@@ -10,6 +10,7 @@ public class InvitationDTO {
 	private String statusMsg;
 	private String groupName;
 	private Date createdDate;
+	private Boolean isPublic;
 
 	public String getInviteeEmail() {
 		return inviteeEmail;
@@ -65,6 +66,14 @@ public class InvitationDTO {
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public Boolean getIsPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(Boolean isPublic) {
+		this.isPublic = isPublic;
 	}
 
 }
