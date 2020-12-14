@@ -74,6 +74,7 @@ public class UserServiceImpl implements UserService {
 
 		user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
 		user.setRoleId(userRole.getRoleId());
+		user.setPassword(NotificationUtils.encodeString(appUser.getPassword()));
 		Users savedUser = userRepo.save(user);
 		appUser.setUserId(savedUser.getUserId());
 
