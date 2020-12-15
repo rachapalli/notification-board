@@ -28,5 +28,5 @@ jobs:
       with:
         app-name: 'notification-demo-app'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_642d634836244dee800f9f9402063823 }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_fd05596b107346e8b04df42d2e02906c }}
         package: '${{ github.workspace }}/target/*.war'
