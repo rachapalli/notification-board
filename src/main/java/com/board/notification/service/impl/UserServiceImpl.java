@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
 		if (UserTypeEnum.BOARD_OWNER.equals(appUser.getUserType())) {
 		}
 
-		emailService.sendEmails(emailDTOs);
+		emailService.sendHtmlEmails(emailDTOs);
 		return appUser;
 	}
 
