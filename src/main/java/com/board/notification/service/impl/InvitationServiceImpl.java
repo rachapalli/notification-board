@@ -67,7 +67,7 @@ public class InvitationServiceImpl implements InvitationService {
 			Users invitedUser = userRepo.findByEmail(emailStatusDTO.getEmail());
 			if (invitedUser != null) {
 				groupService.addGroupUser(invitedUser.getUserId(), groupDTO.getGroupId(),
-						boardInvitation.getCreatedBy(), ActiveStatusEnum.INACTIVE.statusFlag());
+						boardInvitation.getCreatedBy(), ActiveStatusEnum.ACTIVE.statusFlag());
 			}
 		}
 		status = true;
