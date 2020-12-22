@@ -108,7 +108,7 @@ public class InvitationServiceImpl implements InvitationService {
 				if (tempInvitation == null) {
 					mapInvitations.put(invitationDTO.getInvitationId(), invitationDTO);
 				} else {
-					tempInvitation.setInviteeEmail(tempInvitation.getInviteeEmail() + "," + invitationDTO.getInviteeEmail());
+					tempInvitation.setInviteeEmail(tempInvitation.getInviteeEmail() + ", " + invitationDTO.getInviteeEmail());
 				}
 			} 
 			return mapInvitations.values();
