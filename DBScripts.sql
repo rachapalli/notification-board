@@ -216,3 +216,6 @@ update APP_PROPERTIES set PROP_VALUE = 'New Board Member Registration' where PRO
 update APP_PROPERTIES set PROP_VALUE = '<p>Hi <<USER_NAME>>, </p><p>Welcome to Notification Board. Your new account successfully registered. Click on below link to activate.</p><p><u><<USER_APPR_LINK>></u></p>' where PROP_NAME = 'USER.REGI.EMAIL.BODY';
 update APP_PROPERTIES set PROP_VALUE = '<p>Hi <<RNAME>>, </p><p>You are invited to Borad <<BNAME>>. Click on below link to access.</p><p><u><<BOARD_LINK>></u></p>' where PROP_NAME = 'INVITE.EMAIL.BODY';
 update APP_PROPERTIES set PROP_VALUE = '<p>Hi, </p><p>You are invited to Borad <<BNAME>>. Click on below link to access.</p><p><u><<BOARD_LINK>></u></p>' where PROP_NAME = 'BOARD.USER.REGI.EMAIL.BODY';
+
+INSERT INTO APP_PROPERTIES values ('USER.APPR.SUCC.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> Approved. Now you can access board <<BNAME>>.');
+INSERT INTO APP_PROPERTIES values ('USER.APPR.SUCC.EMAIL.SUBJECT', 'Board Approval Confirmation');

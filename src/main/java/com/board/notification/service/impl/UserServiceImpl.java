@@ -241,8 +241,14 @@ public class UserServiceImpl implements UserService {
 		if (group == null) {
 			throw new DataNotFoundException("Group " + NotificationConstants.MSG_NOT_FOUND);
 		}
-		return userRepo.updateGroupUser(groupUser.getUserId(), group.getGroupId(),
+		Integer updatedCount = userRepo.updateGroupUser(groupUser.getUserId(), group.getGroupId(),
 				groupUsersDTO.getIsActive() ? ActiveStatusEnum.ACTIVE.status() : ActiveStatusEnum.INACTIVE.status());
+		if (groupUsersDTO.getIsActive() && updatedCount > 0) {
+			emailService.sendHtmlEmail(new EmailDTO(groupUser.getEmail(), 
+				env.getProperty(NotificationConstants.DB_PROP_USER_APPR_SUCC_EMAIL_SUBJECT),
+				prepareUserApprovalBody(groupUser.getUserName(), group.getGroupName())));
+		}
+		return updatedCount;
 	}
 	
 	private String prepareUserRegistrationBody(String userName, String email) {
@@ -261,4 +267,10 @@ public class UserServiceImpl implements UserService {
 		return message;
 	}
 
+	private String prepareUserApprovalBody(String userName, String groupName) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_USER_APPR_SUCC_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
+				NotificationConstants.PH_BNAME, groupName);
+		return message;
+	}
 }
