@@ -1,5 +1,6 @@
 package com.board.notification.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.board.notification.model.Invitation;
@@ -15,5 +16,5 @@ public interface InvitationService {
 
 	List<InvitationDetailsDTO> getUserInvitedGroupDetails(String emailId);
 
-	List<InvitationDTO> getUserCreatedInvitations(String userEmail);
+	Collection<InvitationDTO> getUserCreatedInvitations(String userEmail);
 }

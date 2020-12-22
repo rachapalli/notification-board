@@ -1,7 +1,10 @@
 package com.board.notification.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,8 +98,22 @@ public class InvitationServiceImpl implements InvitationService {
 	}
 	
 	@Override
-	public List<InvitationDTO> getUserCreatedInvitations(String userEmail) {
-		return invitationsRepo.getUserCreatedInvitations(userEmail);
+	public Collection<InvitationDTO> getUserCreatedInvitations(String userEmail) {
+		List<InvitationDTO> userCreatedInvitations = invitationsRepo.getUserCreatedInvitations(userEmail);
+		if (!userCreatedInvitations.isEmpty()) {
+			Map<Integer, InvitationDTO> mapInvitations = new HashMap<>();
+			InvitationDTO tempInvitation = null;
+			for (InvitationDTO invitationDTO : userCreatedInvitations) {
+				tempInvitation = mapInvitations.get(invitationDTO.getInvitationId());
+				if (tempInvitation == null) {
+					mapInvitations.put(invitationDTO.getInvitationId(), invitationDTO);
+				} else {
+					tempInvitation.setInviteeEmail(tempInvitation.getInviteeEmail() + ", " + invitationDTO.getInviteeEmail());
+				}
+			} 
+			return mapInvitations.values();
+		}
+		return userCreatedInvitations;
 	}
 	
 	
