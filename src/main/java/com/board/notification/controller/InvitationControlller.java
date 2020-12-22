@@ -1,5 +1,6 @@
 package com.board.notification.controller;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public class InvitationControlller {
 	}
 	
 	@PostMapping("/user-invitations")
-	public List<InvitationDTO> getUserInvitations(@RequestBody Map<String, String> userInput) {
+	public Collection<InvitationDTO> getUserInvitations(@RequestBody Map<String, String> userInput) {
 		if (userInput == null || userInput.isEmpty() || userInput.get(NotificationConstants.KEY_EMAIL) == null) {
 			throw new InvalidRequestException(
 					NotificationConstants.KEY_EMAIL + NotificationConstants.MSG_NOT_NULL_EMPTY);

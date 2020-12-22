@@ -2,6 +2,8 @@ package com.board.notification.model.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class InvitationDTO {
 	private String inviteeEmail;
 	private String subject;
@@ -9,6 +11,8 @@ public class InvitationDTO {
 	private String status;
 	private String statusMsg;
 	private String groupName;
+	@JsonIgnore
+	private Integer invitationId;
 	private Date createdDate;
 	private Boolean isPublic;
 
@@ -74,6 +78,14 @@ public class InvitationDTO {
 
 	public void setIsPublic(Boolean isPublic) {
 		this.isPublic = isPublic;
+	}
+
+	public Integer getInvitationId() {
+		return invitationId;
+	}
+
+	public void setInvitationId(Integer invitationId) {
+		this.invitationId = invitationId;
 	}
 
 }
