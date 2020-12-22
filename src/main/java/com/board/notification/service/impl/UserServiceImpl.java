@@ -243,7 +243,7 @@ public class UserServiceImpl implements UserService {
 		}
 		Integer updatedCount = userRepo.updateGroupUser(groupUser.getUserId(), group.getGroupId(),
 				groupUsersDTO.getIsActive() ? ActiveStatusEnum.ACTIVE.status() : ActiveStatusEnum.INACTIVE.status());
-		if (updatedCount > 0) {
+		if (groupUsersDTO.getIsActive() && updatedCount > 0) {
 			emailService.sendHtmlEmail(new EmailDTO(groupUser.getEmail(), 
 				env.getProperty(NotificationConstants.DB_PROP_USER_APPR_SUCC_EMAIL_SUBJECT),
 				prepareUserApprovalBody(groupUser.getUserName(), group.getGroupName())));
