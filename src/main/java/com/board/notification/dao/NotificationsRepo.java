@@ -67,4 +67,8 @@ public interface NotificationsRepo extends CrudRepository<Notifications, Integer
 	@Query(value = "update group_notifications SET is_active=0 where group_id=:groupId and notification_id= :notificationId")
 	public Integer deleteGroupNotification(@Param("groupId") Integer groupId, @Param("notificationId") Integer notificationId);
 	
+	@Modifying
+	@Query(value = "update group_notifications SET is_active=1 where notification_id= :notificationId")
+	public Integer enableGroupNotification(@Param("notificationId") Integer notificationId);
+	
 }

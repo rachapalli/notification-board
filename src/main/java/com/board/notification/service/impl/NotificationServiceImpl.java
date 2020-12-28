@@ -164,6 +164,7 @@ public class NotificationServiceImpl implements NotificationService {
 			notifications.setFileId(file.getFileId());
 		}
 		notificationsRepo.save(notifications);
+		notificationsRepo.enableGroupNotification(notifications.getNotificationId());
 		return notificationDTO;
 	}
 	

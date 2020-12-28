@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.AuthenticationResponse;
-import com.board.notification.model.NotificationType;
 import com.board.notification.model.dto.CommonResponse;
 import com.board.notification.model.dto.DeleteGroupNotificationDTO;
 import com.board.notification.model.dto.GroupDTO;
