@@ -62,4 +62,26 @@ public class NotificationUtils {
 		UserDetails userDetail = (UserDetails) authentication.getPrincipal();
 		return userDetail.getUsername();
 	}
+	
+	/**
+	 * function to generate a random string of length n
+	 * 
+	 * @param n
+	 * @returns AlphaNumericString with length n
+	 */
+	public static String getAlphaNumericString(int n) {
+		// create StringBuffer size of AlphaNumericString
+		StringBuilder sb = new StringBuilder(n);
+		for (int i = 0; i < n; i++) {
+			// generate a random number between
+			// 0 to AlphaNumericString variable length
+			int index = (int) (NotificationConstants.ALPHANUMERIC_STRING.length() * Math.random());
+
+			// add Character one by one in end of sb
+			sb.append(NotificationConstants.ALPHANUMERIC_STRING.charAt(index));
+		}
+
+		return sb.toString();
+	}
+	
 }

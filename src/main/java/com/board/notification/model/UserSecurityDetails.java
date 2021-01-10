@@ -19,6 +19,7 @@ public class UserSecurityDetails implements UserDetails {
 	private String email;
 	private Date lastPasswordReset;
 	private Collection<? extends GrantedAuthority> authorities;
+	private Boolean isTempPwd;
 	private Boolean accountNonExpired = true;
 	private Boolean accountNonLocked = true;
 	private Boolean credentialsNonExpired = true;
@@ -48,7 +49,7 @@ public class UserSecurityDetails implements UserDetails {
 		this.setLastPasswordReset(lastPasswordReset);
 		this.setAuthorities(authorities);
 	}
-	
+
 	/**
 	 * Parameterized constructor to initialized the fields
 	 * 
@@ -58,15 +59,17 @@ public class UserSecurityDetails implements UserDetails {
 	 * @param email             email
 	 * @param lastPasswordReset last password
 	 * @param permissions       authrorities or role information for permission
+	 * @param isTempPwd
 	 */
 	public UserSecurityDetails(Integer id, String username, String password, String email, Date lastPasswordReset,
-			List<PermissionDTO> permissions) {
+			List<PermissionDTO> permissions, Boolean isTempPwd) {
 		this.setId(id);
 		this.setUsername(username);
 		this.setPassword(password);
 		this.setEmail(email);
 		this.setLastPasswordReset(lastPasswordReset);
 		this.setPermissions(permissions);
+		this.setIsTempPwd(isTempPwd);
 	}
 
 	/**
@@ -250,6 +253,14 @@ public class UserSecurityDetails implements UserDetails {
 
 	public void setPermissions(List<PermissionDTO> permissions) {
 		this.permissions = permissions;
+	}
+
+	public Boolean getIsTempPwd() {
+		return isTempPwd;
+	}
+
+	public void setIsTempPwd(Boolean isTempPwd) {
+		this.isTempPwd = isTempPwd;
 	}
 
 }

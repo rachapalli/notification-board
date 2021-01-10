@@ -219,3 +219,8 @@ update APP_PROPERTIES set PROP_VALUE = '<p>Hi, </p><p>You are invited to Borad <
 
 INSERT INTO APP_PROPERTIES values ('USER.APPR.SUCC.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> Approved. Now you can access board <<BNAME>>.');
 INSERT INTO APP_PROPERTIES values ('USER.APPR.SUCC.EMAIL.SUBJECT', 'Board Approval Confirmation');
+
+alter table users add is_temp_pwd BIT DEFAULT 0;
+
+INSERT into APP_PROPERTIES VALUES('RESET.PWD.EMAIL.SUBJECT', 'Reset Password');
+INSERT into APP_PROPERTIES VALUES('RESET.PWD.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> You recently requested to reset password.</p><p>Your temporay password to login is : <<NEW_PWD>></p>');

@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.AuthenticationRequest;
 import com.board.notification.model.AuthenticationResponse;
+import com.board.notification.model.StatusEnum;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.CommonResponse;
+import com.board.notification.model.dto.EmailDTO;
 import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.service.UserService;
 import com.board.notification.service.impl.NotificationUserDetailsService;
@@ -56,7 +58,7 @@ public class UserController {
 	}
 
 	@PostMapping("/update")
-	public ResponseEntity<CommonResponse> updateUser(@Valid @RequestBody AppUser appUser) {
+	public ResponseEntity<CommonResponse> updateUser(@RequestBody AppUser appUser) {
 		AppUser updatedUser = userService.updateUser(appUser);
 		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_UPDATE_SUCCESS, updatedUser));
 	}
@@ -118,6 +120,20 @@ public class UserController {
 	public ResponseEntity<CommonResponse> approveGroupUser(@Valid @RequestBody GroupUsersDTO groupUsersDTO) {
 		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_UPDATE_SUCCESS,
 				userService.updateGroupUser(groupUsersDTO)));
+	}
+	
+	
+	@PostMapping(value = "/resetPassword")
+	public ResponseEntity<CommonResponse> resetPassword(@RequestBody EmailDTO emailDTO) {
+		if (emailDTO == null || emailDTO.getEmail() == null || emailDTO.getEmail().isEmpty()) {
+			throw new InvalidRequestException(NotificationConstants.REQUIRED_MSG + NotificationConstants.KEY_EMAIL);
+		}
+		StatusEnum resetPasswordStatus = userService.resetPassword(emailDTO.getEmail());
+		if (StatusEnum.SUCCESS.equals(resetPasswordStatus)) {
+			return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_PWD_RESET_SUCCESS, resetPasswordStatus));
+		} else {
+			return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_PWD_RESET_FAIL, resetPasswordStatus));
+		}
 	}
 
 }
