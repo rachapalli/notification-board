@@ -2,6 +2,7 @@ package com.board.notification.service;
 
 import java.util.List;
 
+import com.board.notification.model.StatusEnum;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.model.dto.PermissionDTO;
@@ -27,4 +28,6 @@ public interface UserService {
 	boolean deleteUser(String email);
 
 	Integer updateGroupUser(GroupUsersDTO groupUsersDTO);
+
+	StatusEnum resetPassword(String email);
 }

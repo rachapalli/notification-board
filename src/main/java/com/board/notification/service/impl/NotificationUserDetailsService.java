@@ -33,7 +33,7 @@ public class NotificationUserDetailsService implements UserDetailsService {
 		} else {
 			try {
 				return new UserSecurityDetails(user.getUserId(), user.getEmail(),
-						NotificationUtils.decodeString(user.getPassword()), user.getEmail(), null, user.getPermissions());
+						NotificationUtils.decodeString(user.getPassword()), user.getEmail(), null, user.getPermissions(), user.getIsTempPwd());
 			} catch (Exception e) {
 				LOGGER.error("Exception in getting user by username : ", e);
 			}

@@ -21,10 +21,12 @@ import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.ActiveStatusEnum;
 import com.board.notification.model.Groups;
 import com.board.notification.model.Roles;
+import com.board.notification.model.StatusEnum;
 import com.board.notification.model.UserTypeEnum;
 import com.board.notification.model.Users;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.EmailDTO;
+import com.board.notification.model.dto.EmailStatusDTO;
 import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.model.dto.InvitationDetailsDTO;
 import com.board.notification.model.dto.PermissionDTO;
@@ -115,14 +117,25 @@ public class UserServiceImpl implements UserService {
 			throw new DataNotFoundException("User " + NotificationConstants.MSG_NOT_FOUND);
 		}
 		Users dbUser = userOptional.get();
-		if (!dbUser.getEmail().equals(appUser.getEmail())) {
+		if (NotificationUtils.isValidEmail(appUser.getEmail()) && !dbUser.getEmail().equals(appUser.getEmail())) {
 			validateUser(appUser);
+			dbUser.setEmail(appUser.getEmail());
 		}
-		dbUser.setEmail(appUser.getEmail());
-		dbUser.setAlternateEmail(appUser.getAlternateEmail());
-		dbUser.setUserName(appUser.getUserName());
-		dbUser.setPassword(appUser.getPassword());
-		dbUser.setContactNumber(appUser.getContactNumber());
+		if (NotificationUtils.isValidEmail(appUser.getAlternateEmail())) {
+			dbUser.setAlternateEmail(appUser.getAlternateEmail());
+		}
+		if (appUser.getUserName() != null && !appUser.getUserName().isEmpty()) {
+			dbUser.setUserName(appUser.getUserName());
+		}
+		if (dbUser.getIsTempPwd()) {
+			dbUser.setPassword(NotificationUtils.encodeString(appUser.getPassword()));
+			dbUser.setIsTempPwd(false);
+		} else if (appUser.getPassword() != null && !appUser.getPassword().isEmpty()){
+			new InvalidRequestException("Password Cannot be updated");
+		}
+		if (appUser.getContactNumber() != null && !appUser.getContactNumber().isEmpty()) {
+			dbUser.setContactNumber(appUser.getContactNumber());
+		}
 		dbUser.setUpdatedDate(NotificationUtils.getUKTime());
 		userRepo.save(dbUser);
 		return appUser;
@@ -251,6 +264,28 @@ public class UserServiceImpl implements UserService {
 		return updatedCount;
 	}
 	
+	@Override
+	public StatusEnum resetPassword(String email) {
+		StatusEnum statusEnum = StatusEnum.FAIL;
+		Users user = userRepo.findByEmail(email);
+		if (user == null) {
+			throw new DataNotFoundException("User not found.");
+		}
+		String alphaNumericString = NotificationUtils.getAlphaNumericString(8);
+		EmailDTO emailDTO = new EmailDTO(user.getEmail(),
+				env.getProperty(NotificationConstants.DB_PROP_RESET_PWD_EMAIL_SUBJECT),
+				prepareResetEmailBody(user.getUserName(), alphaNumericString));
+		EmailStatusDTO emailStatusDTO = emailService.sendHtmlEmail(emailDTO);
+		if (StatusEnum.SUCCESS.equals(emailStatusDTO.getStatus())) {
+			user.setPassword(NotificationUtils.encodeString(alphaNumericString));
+			user.setIsTempPwd(true);
+			userRepo.save(user);
+			statusEnum = StatusEnum.SUCCESS;
+		}
+		return statusEnum;
+	}
+	
+	
 	private String prepareUserRegistrationBody(String userName, String email) {
 		String message = new String(env.getProperty(NotificationConstants.DB_PROP_USER_REGI_EMAIL_BODY));
 		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
@@ -271,6 +306,13 @@ public class UserServiceImpl implements UserService {
 		String message = new String(env.getProperty(NotificationConstants.DB_PROP_USER_APPR_SUCC_EMAIL_BODY));
 		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
 				NotificationConstants.PH_BNAME, groupName);
+		return message;
+	}
+	
+	private String prepareResetEmailBody(String userName, String password) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_RESET_PWD_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
+				NotificationConstants.PH_NEW_PWD, password);
 		return message;
 	}
 }

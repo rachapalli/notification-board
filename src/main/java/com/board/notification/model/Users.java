@@ -17,6 +17,7 @@ public class Users {
 	private Date updatedDate;
 	private Boolean isActive;
 	private Integer roleId;
+	private Boolean isTempPwd;
 
 	public Users() {
 	}
@@ -119,6 +120,14 @@ public class Users {
 
 	public void setRoleId(Integer roleId) {
 		this.roleId = roleId;
+	}
+
+	public Boolean getIsTempPwd() {
+		return isTempPwd;
+	}
+
+	public void setIsTempPwd(Boolean isTempPwd) {
+		this.isTempPwd = isTempPwd;
 	}
 
 }

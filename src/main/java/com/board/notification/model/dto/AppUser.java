@@ -35,6 +35,7 @@ public class AppUser {
 
 	private List<PermissionDTO> permissions;
 	private Boolean isActive;
+	private Boolean isTempPwd;
 
 	public Integer getUserId() {
 		return userId;
@@ -128,12 +129,20 @@ public class AppUser {
 		return null;
 	}
 
+	public Boolean getIsTempPwd() {
+		return isTempPwd;
+	}
+
+	public void setIsTempPwd(Boolean isTempPwd) {
+		this.isTempPwd = isTempPwd;
+	}
+
 	@Override
 	public String toString() {
 		return "AppUser [userId=" + userId + ", userName=" + userName + ", password=" + password + ", email=" + email
 				+ ", alternateEmail=" + alternateEmail + ", contactNumber=" + contactNumber + ", userType=" + userType
 				+ ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", permissions=" + permissions
-				+ ", isActive=" + isActive + "]";
+				+ ", isActive=" + isActive + ", isTempPwd=" + isTempPwd + "]";
 	}
 
 }
