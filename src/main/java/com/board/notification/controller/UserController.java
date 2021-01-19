@@ -29,6 +29,7 @@ import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.CommonResponse;
 import com.board.notification.model.dto.EmailDTO;
 import com.board.notification.model.dto.GroupUsersDTO;
+import com.board.notification.model.dto.UserDTO;
 import com.board.notification.service.UserService;
 import com.board.notification.service.impl.NotificationUserDetailsService;
 import com.board.notification.utils.NotificationConstants;
@@ -134,6 +135,16 @@ public class UserController {
 		} else {
 			return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_PWD_RESET_FAIL, resetPasswordStatus));
 		}
+	}
+	
+	@PostMapping("/getUserDetailsByRole")
+	public List<UserDTO> getApp(@RequestBody Map<String, String> userInput) {
+		if (userInput == null || userInput.isEmpty() || userInput.get(NotificationConstants.KEY_ROLE_NAME) == null
+				|| userInput.get(NotificationConstants.KEY_ROLE_NAME).isEmpty()) {
+			throw new InvalidRequestException(
+					NotificationConstants.KEY_ROLE_NAME + NotificationConstants.MSG_NOT_NULL_EMPTY);
+		}
+		return userService.getUserDetailsRole(userInput.get(NotificationConstants.KEY_ROLE_NAME));
 	}
 
 }

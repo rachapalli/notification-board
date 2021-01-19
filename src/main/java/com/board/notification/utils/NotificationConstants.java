@@ -24,6 +24,7 @@ public class NotificationConstants {
 	public static String INVALID_USER_EMAIL = "Invalid User Email/Not found";
 	public static String KEY_EMAIL = "email";
 	public static String KEY_NTYEPE = "notificationType";
+	public static String KEY_ROLE_NAME = "roleName";
 	public static String PH_RNAME = "<<RNAME>>";
 	public static String PH_BNAME = "<<BNAME>>";
 	public static String PH_BOARD_LINK = "<<BOARD_LINK>>";

@@ -36,6 +36,7 @@ public class AppUser {
 	private List<PermissionDTO> permissions;
 	private Boolean isActive;
 	private Boolean isTempPwd;
+	private Boolean isApproved;
 
 	public Integer getUserId() {
 		return userId;
@@ -137,12 +138,20 @@ public class AppUser {
 		this.isTempPwd = isTempPwd;
 	}
 
+	public Boolean getIsApproved() {
+		return isApproved;
+	}
+
+	public void setIsApproved(Boolean isApproved) {
+		this.isApproved = isApproved;
+	}
+
 	@Override
 	public String toString() {
 		return "AppUser [userId=" + userId + ", userName=" + userName + ", password=" + password + ", email=" + email
 				+ ", alternateEmail=" + alternateEmail + ", contactNumber=" + contactNumber + ", userType=" + userType
 				+ ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", permissions=" + permissions
-				+ ", isActive=" + isActive + ", isTempPwd=" + isTempPwd + "]";
+				+ ", isActive=" + isActive + ", isTempPwd=" + isTempPwd + ", isApproved=" + isApproved + "]";
 	}
 
 }

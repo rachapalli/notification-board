@@ -30,6 +30,7 @@ import com.board.notification.model.dto.EmailStatusDTO;
 import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.model.dto.InvitationDetailsDTO;
 import com.board.notification.model.dto.PermissionDTO;
+import com.board.notification.model.dto.UserDTO;
 import com.board.notification.service.EmailService;
 import com.board.notification.service.UserService;
 import com.board.notification.utils.NotificationConstants;
@@ -314,5 +315,25 @@ public class UserServiceImpl implements UserService {
 		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
 				NotificationConstants.PH_NEW_PWD, password);
 		return message;
+	}
+	
+	@Override
+	public List<UserDTO> getUserDetailsRole(String roleName) {
+		if (roleName == null || roleName.isEmpty()) {
+			throw new InvalidRequestException("roleName " + NotificationConstants.MSG_NOT_NULL_EMPTY);
+		}
+		Roles userRole = rolesRepo.findByRoleName(roleName);
+		if (userRole == null) {
+			throw new DataNotFoundException("roleName " + NotificationConstants.MSG_NOT_FOUND);
+		}
+		List<Users> allUsers = userRepo.findByUserRole(userRole.getRoleId());
+		List<UserDTO> userDTOs = new ArrayList<>();
+		UserDTO userDTO;
+		for (Users tempUser : allUsers) {
+			userDTO = new UserDTO();
+			BeanUtils.copyProperties(tempUser, userDTO);
+			userDTOs.add(userDTO);
+		}
+		return userDTOs;
 	}
 }

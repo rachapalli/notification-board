@@ -224,3 +224,11 @@ alter table users add is_temp_pwd BIT DEFAULT 0;
 
 INSERT into APP_PROPERTIES VALUES('RESET.PWD.EMAIL.SUBJECT', 'Reset Password');
 INSERT into APP_PROPERTIES VALUES('RESET.PWD.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> You recently requested to reset password.</p><p>Your temporay password to login is : <<NEW_PWD>></p>');
+
+INSERT INTO roles (role_name, created_by, created_date, is_active) values ('Product Owner',1,GETDATE(),1);
+
+INSERT INTO users(user_name,password,email,contact_number,is_active)
+VALUES('Product Owner', 'TkJAMjAyMA==', 'notificationboard31@gmail.com','9874563210', 1 );
+
+alter table users add is_approved BIT DEFAULT 0;
+alter table groups add is_approved BIT DEFAULT 0;

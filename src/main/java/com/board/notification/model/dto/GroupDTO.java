@@ -7,18 +7,19 @@ import javax.validation.constraints.NotNull;
 
 public class GroupDTO {
 	private Integer groupId;
-	
+
 	@NotBlank(message = "Group Name cannot be null or empty")
 	private String groupName;
-	
+
 	@NotNull(message = "isPublic cannot be null")
 	private Boolean isPublic;
-	
+
 	@NotNull(message = "createdBy cannot be null")
 	private Integer createdBy;
-	
+
 	private Date createdDate;
 	private Boolean isActive;
+	private Boolean isApproved;
 
 	public GroupDTO() {
 	}
@@ -84,6 +85,21 @@ public class GroupDTO {
 
 	public void setCreatedBy(Integer createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	public Boolean getIsApproved() {
+		return isApproved;
+	}
+
+	public void setIsApproved(Boolean isApproved) {
+		this.isApproved = isApproved;
+	}
+
+	@Override
+	public String toString() {
+		return "GroupDTO [groupId=" + groupId + ", groupName=" + groupName + ", isPublic=" + isPublic + ", createdBy="
+				+ createdBy + ", createdDate=" + createdDate + ", isActive=" + isActive + ", isApproved=" + isApproved
+				+ "]";
 	}
 
 }
