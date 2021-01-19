@@ -18,6 +18,7 @@ public class Users {
 	private Boolean isActive;
 	private Integer roleId;
 	private Boolean isTempPwd;
+	private Boolean isApproved;
 
 	public Users() {
 	}
@@ -128,6 +129,14 @@ public class Users {
 
 	public void setIsTempPwd(Boolean isTempPwd) {
 		this.isTempPwd = isTempPwd;
+	}
+
+	public Boolean getIsApproved() {
+		return isApproved;
+	}
+
+	public void setIsApproved(Boolean isApproved) {
+		this.isApproved = isApproved;
 	}
 
 }
