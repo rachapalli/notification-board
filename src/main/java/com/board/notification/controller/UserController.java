@@ -79,11 +79,17 @@ public class UserController {
 	}
 
 	@PostMapping("/findUser")
-	public AppUser getUserByEmail(Map<String, String> requestMap) {
+	public AppUser getUserByEmail(@RequestBody Map<String, String> requestMap) {
 		if (requestMap == null || requestMap.isEmpty() || requestMap.get(NotificationConstants.KEY_EMAIL) == null) {
 			throw new InvalidRequestException(NotificationConstants.REQUIRED_MSG + NotificationConstants.KEY_EMAIL);
 		}
 		return userService.getUserByEmail(requestMap.get(NotificationConstants.KEY_EMAIL));
+	}
+	
+	@PostMapping("/approveUser")
+	public ResponseEntity<CommonResponse> approveUser(@Valid @RequestBody UserDTO userDTO) {
+		return ResponseEntity
+				.ok(new CommonResponse(NotificationConstants.MSG_APPROVAL_STATUS, userService.approveUser(userDTO)));
 	}
 
 	@GetMapping("/getUsers")

@@ -73,5 +73,10 @@ public class GroupController {
 		}
 		return groupService.getGroupUsers(userInput.get(NotificationConstants.KEY_EMAIL));
 	}
+	
+	@PostMapping("/approve")
+	public ResponseEntity<CommonResponse> approveGroup(@RequestBody GroupDTO group) {
+		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_APPROVAL_STATUS, groupService.approveGroup(group)));
+	}
 
 }

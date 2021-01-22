@@ -232,3 +232,9 @@ VALUES('Product Owner', 'TkJAMjAyMA==', 'notificationboard31@gmail.com','9874563
 
 alter table users add is_approved BIT DEFAULT 0;
 alter table groups add is_approved BIT DEFAULT 0;
+
+INSERT into APP_PROPERTIES VALUES('PO.APPR.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> Your account is <<APPR_DESC>></p>');
+INSERT into APP_PROPERTIES VALUES('PO.APPR.EMAIL.SUBJECT', 'Approval Response');
+
+INSERT into APP_PROPERTIES VALUES('PO.GRP.APPR.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> Your Board <<BNAME>> is <<APPR_DESC>></p>');
+INSERT into APP_PROPERTIES VALUES('PO.GRP.APPR.EMAIL.SUBJECT', 'Board Approval Response');

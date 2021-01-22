@@ -11,6 +11,7 @@ public class NotificationConstants {
 	public static String MSG_CREATE_SUCCESS = "Created Successfully";
 	public static String MSG_UPDATE_SUCCESS = "Updated Successfully";
 	public static String MSG_DELETE_SUCCESS = "Deleted Successfully";
+	public static String MSG_APPROVAL_STATUS = "approval/Disapproval status";
 	public static String MSG_PWD_RESET_SUCCESS = "Your password has been reset successfully!";
 	public static String MSG_PWD_RESET_FAIL = "An error occurred while reset password";
 	public static String MSG_NOT_NULL_EMPTY = " cannot be null or empty";
@@ -31,6 +32,9 @@ public class NotificationConstants {
 	public static String PH_USER_NAME = "<<USER_NAME>>";
 	public static String PH_NEW_PWD = "<<NEW_PWD>>";
 	public static String PH_USER_APPR_LINK = "<<USER_APPR_LINK>>";
+	public static String PH_APPR_DESC = "<<APPR_DESC>>";
+	public static String DESC_APPROVED = "approved";
+	public static String DESC_DISAPPROVED = "disapproved";
 	public static String EMAIL_PATTERN = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
 	public static String DB_PROP_ADMIN_USER_EMAIL_ID = "ADMIN.USER.EMAIL.ID";
 	public static String DB_PROP_USER_REGI_APPR_LINK = "USER.REGI.APPR.LINK";
@@ -42,6 +46,12 @@ public class NotificationConstants {
 	public static String DB_PROP_USER_APPR_SUCC_EMAIL_SUBJECT = "USER.APPR.SUCC.EMAIL.SUBJECT";
 	public static String DB_PROP_RESET_PWD_EMAIL_SUBJECT = "RESET.PWD.EMAIL.SUBJECT";
 	public static String DB_PROP_RESET_PWD_EMAIL_BODY = "RESET.PWD.EMAIL.BODY";
+	public static String DB_PROP_PO_APPR_EMAIL_BODY = "PO.APPR.EMAIL.BODY";
+	public static String DB_PROP_PO_APPR_EMAIL_SUBJECT = "PO.APPR.EMAIL.SUBJECT";
+	public static String DB_PROP_PO_GRP_APPR_EMAIL_BODY = "PO.GRP.APPR.EMAIL.BODY";
+	public static String DB_PROP_PO_GRP_APPR_EMAIL_SUBJECT = "PO.GRP.APPR.EMAIL.SUBJECT";
+	
+	
 	public static String ALPHANUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz"; 
 
 }

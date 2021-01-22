@@ -19,7 +19,7 @@ public class AppUser {
 	private String password;
 
 	@NotBlank(message = "Email is mandatory")
-	@Email(message = "Invalid Email Id")
+	@Email(regexp = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$", message = "Invalid email")
 	private String email;
 
 	private String alternateEmail;

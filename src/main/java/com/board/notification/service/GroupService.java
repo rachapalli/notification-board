@@ -2,6 +2,7 @@ package com.board.notification.service;
 
 import java.util.List;
 
+import com.board.notification.model.StatusEnum;
 import com.board.notification.model.dto.GroupDTO;
 import com.board.notification.model.dto.GroupUsersDTO;
 
@@ -28,4 +29,6 @@ public interface GroupService {
 	GroupDTO getGroupByName(String groupName);
 
 	boolean checkUserGroupAccess(String userEmail, Integer groupId);
+
+	StatusEnum approveGroup(GroupDTO groupDTO);
 }
