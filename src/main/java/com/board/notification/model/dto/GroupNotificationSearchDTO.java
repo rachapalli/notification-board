@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import com.board.notification.model.NotificationType;
 
 public class GroupNotificationSearchDTO {
-	@Email(message = "Invalid email")
+	@Email(regexp = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$", message = "Invalid email")
 	@NotBlank(message = "email cannot be null or empty")
 	private String email;
 	private NotificationType notificationType;

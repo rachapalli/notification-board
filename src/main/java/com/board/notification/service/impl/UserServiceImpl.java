@@ -184,6 +184,21 @@ public class UserServiceImpl implements UserService {
 		}
 		return appUser;
 	}
+	
+	@Override
+	public StatusEnum approveUser(UserDTO userDTO) {
+		Users user = userRepo.findByEmail(userDTO.getEmail());
+		if (user == null) {
+			throw new DataNotFoundException("User not found.");
+		}
+		user.setIsApproved(userDTO.getIsApproved());
+		userRepo.save(user);
+		EmailDTO emailDTO = new EmailDTO(user.getEmail(),
+				env.getProperty(NotificationConstants.DB_PROP_PO_APPR_EMAIL_SUBJECT),
+				preparePOApprovalEmailBody(user.getUserName(), userDTO.getIsApproved()));
+		EmailStatusDTO sendEmailStatus = emailService.sendHtmlEmail(emailDTO);
+		return (sendEmailStatus == null ? StatusEnum.FAIL : sendEmailStatus.getStatus());
+	}
 
 	@Override
 	public List<AppUser> getAllAppUsers() {
@@ -314,6 +329,13 @@ public class UserServiceImpl implements UserService {
 		String message = new String(env.getProperty(NotificationConstants.DB_PROP_RESET_PWD_EMAIL_BODY));
 		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
 				NotificationConstants.PH_NEW_PWD, password);
+		return message;
+	}
+	
+	private String preparePOApprovalEmailBody(String userName, Boolean isApproved) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_PO_APPR_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
+				NotificationConstants.PH_APPR_DESC, isApproved ? NotificationConstants.DESC_APPROVED : NotificationConstants.DESC_DISAPPROVED);
 		return message;
 	}
 	

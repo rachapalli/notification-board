@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +16,14 @@ import com.board.notification.exception.DataNotFoundException;
 import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.ActiveStatusEnum;
 import com.board.notification.model.Groups;
+import com.board.notification.model.StatusEnum;
 import com.board.notification.model.Users;
+import com.board.notification.model.dto.EmailDTO;
+import com.board.notification.model.dto.EmailStatusDTO;
 import com.board.notification.model.dto.GroupDTO;
 import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.model.dto.NotificationConverter;
+import com.board.notification.service.EmailService;
 import com.board.notification.service.GroupService;
 import com.board.notification.utils.NotificationConstants;
 import com.board.notification.utils.NotificationUtils;
@@ -31,6 +36,12 @@ public class GroupServiceImpl implements GroupService {
 	
 	@Autowired
 	private UserRepo userRepo;
+	
+	@Autowired
+	private EmailService emailService;
+	
+	@Autowired
+	private Environment env;
 
 	@Transactional
 	@Override
@@ -91,6 +102,40 @@ public class GroupServiceImpl implements GroupService {
 			throw new DataNotFoundException("Group id" + NotificationConstants.MSG_NOT_FOUND);
 		}
 		return groupDTO;
+	}
+	
+	@Override
+	public StatusEnum approveGroup(GroupDTO groupDTO) {
+		StatusEnum statusEnum = StatusEnum.FAIL;
+		if (groupDTO == null) {
+			throw new InvalidRequestException("Invalid Request data");
+		} else {
+			if (groupDTO.getGroupName() == null || groupDTO.getGroupName().isEmpty()) {
+				throw new InvalidRequestException("groupName" + NotificationConstants.MSG_NOT_NULL_EMPTY);
+			}
+
+			if (groupDTO.getIsApproved() == null) {
+				throw new InvalidRequestException("IsApproved is required");
+			}
+		}
+		Groups group = groupRepo.findByGroupName(groupDTO.getGroupName());
+		if (group == null) {
+			throw new DataNotFoundException("groupName" + NotificationConstants.MSG_NOT_FOUND);
+		}
+		group.setIsApproved(groupDTO.getIsApproved());
+		groupRepo.save(group);
+		Optional<Users> boardOwnerOpt = userRepo.findById(group.getCreatedBy());
+		if (boardOwnerOpt.isPresent()) {
+			Users boardOwner = boardOwnerOpt.get();
+			EmailDTO emailDTO = new EmailDTO(boardOwner.getEmail(),
+					env.getProperty(NotificationConstants.DB_PROP_PO_GRP_APPR_EMAIL_SUBJECT),
+					preparePOApprovalEmailBody(boardOwner.getUserName(), groupDTO.getIsApproved(), group.getGroupName()));
+			EmailStatusDTO sentEmailStatus = emailService.sendHtmlEmail(emailDTO);
+			statusEnum = sentEmailStatus == null ? statusEnum : sentEmailStatus.getStatus();
+		} else {
+			throw new DataNotFoundException("Board Owner" + NotificationConstants.MSG_NOT_FOUND);
+		}
+		return statusEnum;
 	}
 
 	private boolean validateGroup(GroupDTO group) {
@@ -159,4 +204,11 @@ public class GroupServiceImpl implements GroupService {
 		return groupRepo.checkUserGroupAccess(userEmail, groupId) > 0 ? true : false; 
 	}
 
+	
+	private String preparePOApprovalEmailBody(String userName, Boolean isApproved, String groupName) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_PO_GRP_APPR_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(NotificationConstants.PH_BNAME, groupName).replace(
+				NotificationConstants.PH_APPR_DESC, isApproved ? NotificationConstants.DESC_APPROVED : NotificationConstants.DESC_DISAPPROVED);
+		return message;
+	}
 }

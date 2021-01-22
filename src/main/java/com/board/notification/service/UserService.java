@@ -33,4 +33,6 @@ public interface UserService {
 	StatusEnum resetPassword(String email);
 
 	List<UserDTO> getUserDetailsRole(String roleName);
+
+	StatusEnum approveUser(UserDTO userDTO);
 }
