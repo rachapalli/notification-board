@@ -161,6 +161,26 @@ Click on below link to approve.
 
 Thanks
 Notification Borad');
+
+insert into APP_PROPERTIES values ('USER.REGI.EMAIL.BODY','Hi <<USER_NAME>>,
+
+Welcome to Notification Board. Your new account successfully registered. 
+Click on below link to activate.
+
+<<USER_APPR_LINK>>
+');
+
+insert into APP_PROPERTIES values ('BOARD.USER.REGI.EMAIL.SUBJECT','New Member Registration');
+
+insert into APP_PROPERTIES values ('BOARD.USER.REGI.EMAIL.BODY','Hi,
+
+New Board member, <<USER_NAME>> is scuccessfully reigistered to Board <<BNAME>>. 
+
+Thanks
+Notification Borad');
+
+
+
 insert into APP_PROPERTIES values ('USER.REGI.EMAIL.SUBJECT','New Board Member Regisration');
 insert into APP_PROPERTIES values ('USER.REGI.APPR.LINK','https://notification-demo-app.azurewebsites.net/user/activate?key=');
 
@@ -168,12 +188,53 @@ insert into APP_PROPERTIES values ('ADMIN.USER.EMAIL.ID','notificationboard1@gma
 
 alter table users drop COLUMN created_by,updated_by;
 
-insert into component(name) VALUES ('BOARD_ADD');
-insert into component(name) VALUES ('BOARD_DELETE');
-insert into component(name) VALUES ('BOARD_EDIT');
-insert into component(name) VALUES ('BOARD_VIEW');
+insert into component(name) VALUES ('BOARD');
+insert into component(name) VALUES ('INVITATION');
+insert into component(name) VALUES ('INVITATION_LIST');
+insert into component(name) VALUES ('INVITATION_APPROVALS');
+insert into component(name) VALUES ('NOTIFICATIONS');
 
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,1,1,1,1);
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,2,1,1,1,1);
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,3,1,1,1,1);
-INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,4,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,5,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,6,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,7,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,8,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (1,9,1,1,1,1);
+
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,5,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,6,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,7,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,8,1,1,1,1);
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (4,9,1,1,1,1);
+
+INSERT into permission (role_id, component_id, is_create, is_edit, is_view, is_delete) VALUES (5,9,0,0,1,0);
+
+alter table all_invitations add group_id INT FOREIGN KEY REFERENCES groups(group_id) ;
+
+alter table all_files drop COLUMN name;
+
+update APP_PROPERTIES set PROP_VALUE = 'New Board Member Registration' where PROP_NAME = 'USER.REGI.EMAIL.SUBJECT';
+update APP_PROPERTIES set PROP_VALUE = '<p>Hi <<USER_NAME>>, </p><p>Welcome to Notification Board. Your new account successfully registered. Click on below link to activate.</p><p><u><<USER_APPR_LINK>></u></p>' where PROP_NAME = 'USER.REGI.EMAIL.BODY';
+update APP_PROPERTIES set PROP_VALUE = '<p>Hi <<RNAME>>, </p><p>You are invited to Borad <<BNAME>>. Click on below link to access.</p><p><u><<BOARD_LINK>></u></p>' where PROP_NAME = 'INVITE.EMAIL.BODY';
+update APP_PROPERTIES set PROP_VALUE = '<p>Hi, </p><p>You are invited to Borad <<BNAME>>. Click on below link to access.</p><p><u><<BOARD_LINK>></u></p>' where PROP_NAME = 'BOARD.USER.REGI.EMAIL.BODY';
+
+INSERT INTO APP_PROPERTIES values ('USER.APPR.SUCC.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> Approved. Now you can access board <<BNAME>>.');
+INSERT INTO APP_PROPERTIES values ('USER.APPR.SUCC.EMAIL.SUBJECT', 'Board Approval Confirmation');
+
+alter table users add is_temp_pwd BIT DEFAULT 0;
+
+INSERT into APP_PROPERTIES VALUES('RESET.PWD.EMAIL.SUBJECT', 'Reset Password');
+INSERT into APP_PROPERTIES VALUES('RESET.PWD.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> You recently requested to reset password.</p><p>Your temporay password to login is : <<NEW_PWD>></p>');
+
+INSERT INTO roles (role_name, created_by, created_date, is_active) values ('Product Owner',1,GETDATE(),1);
+
+INSERT INTO users(user_name,password,email,contact_number,is_active)
+VALUES('Product Owner', 'TkJAMjAyMA==', 'notificationboard31@gmail.com','9874563210', 1 );
+
+alter table users add is_approved BIT DEFAULT 0;
+alter table groups add is_approved BIT DEFAULT 0;
+
+INSERT into APP_PROPERTIES VALUES('PO.APPR.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> Your account is <<APPR_DESC>></p>');
+INSERT into APP_PROPERTIES VALUES('PO.APPR.EMAIL.SUBJECT', 'Approval Response');
+
+INSERT into APP_PROPERTIES VALUES('PO.GRP.APPR.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> Your Board <<BNAME>> is <<APPR_DESC>></p>');
+INSERT into APP_PROPERTIES VALUES('PO.GRP.APPR.EMAIL.SUBJECT', 'Board Approval Response');

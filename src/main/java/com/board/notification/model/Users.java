@@ -17,6 +17,8 @@ public class Users {
 	private Date updatedDate;
 	private Boolean isActive;
 	private Integer roleId;
+	private Boolean isTempPwd;
+	private Boolean isApproved;
 
 	public Users() {
 	}
@@ -119,6 +121,22 @@ public class Users {
 
 	public void setRoleId(Integer roleId) {
 		this.roleId = roleId;
+	}
+
+	public Boolean getIsTempPwd() {
+		return isTempPwd;
+	}
+
+	public void setIsTempPwd(Boolean isTempPwd) {
+		this.isTempPwd = isTempPwd;
+	}
+
+	public Boolean getIsApproved() {
+		return isApproved;
+	}
+
+	public void setIsApproved(Boolean isApproved) {
+		this.isApproved = isApproved;
 	}
 
 }

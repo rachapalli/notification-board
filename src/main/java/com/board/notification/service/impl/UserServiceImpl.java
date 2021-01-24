@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.board.notification.dao.GroupRepo;
+import com.board.notification.dao.InvitationsRepo;
 import com.board.notification.dao.PermissionRepo;
 import com.board.notification.dao.RolesRepo;
 import com.board.notification.dao.UserRepo;
@@ -20,11 +21,16 @@ import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.ActiveStatusEnum;
 import com.board.notification.model.Groups;
 import com.board.notification.model.Roles;
+import com.board.notification.model.StatusEnum;
 import com.board.notification.model.UserTypeEnum;
 import com.board.notification.model.Users;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.EmailDTO;
+import com.board.notification.model.dto.EmailStatusDTO;
+import com.board.notification.model.dto.GroupUsersDTO;
+import com.board.notification.model.dto.InvitationDetailsDTO;
 import com.board.notification.model.dto.PermissionDTO;
+import com.board.notification.model.dto.UserDTO;
 import com.board.notification.service.EmailService;
 import com.board.notification.service.UserService;
 import com.board.notification.utils.NotificationConstants;
@@ -47,10 +53,14 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private GroupRepo groupRepo;
-	
+
+	@Autowired
+	private InvitationsRepo invitationsRepo;
+
 	@Autowired
 	private Environment env;
-	
+
+	@Transactional
 	@Override
 	public AppUser createUser(AppUser appUser) {
 		if (appUser.getUserId() != null) {
@@ -65,36 +75,39 @@ public class UserServiceImpl implements UserService {
 			throw new DataNotFoundException("Role " + appUser.getUserType() + NotificationConstants.MSG_NOT_FOUND);
 		}
 
-		EmailDTO emailDTO = new EmailDTO();
-		
-		if (UserTypeEnum.MEMBER.equals(appUser.getUserType())) {
-			if (appUser.getGroupName() == null || appUser.getGroupName().isEmpty()) {
-				throw new InvalidRequestException("For User type Member group name is mandatory");
-			}
-			Groups group = groupRepo.findByGroupName(appUser.getGroupName());
-			if (group == null) {
-				throw new InvalidRequestException(
-						"Group " + appUser.getGroupName() + NotificationConstants.MSG_NOT_FOUND);
-			}
-			AppUser groupOwner = findUserById(group.getCreatedBy());
-			emailDTO.setEmail(groupOwner.getEmail());
-			emailDTO.setMessage(prepareUserRegBody(appUser.getUserName(), group.getGroupName(), appUser.getEmail()));
-		} else 
-		
-		if (UserTypeEnum.BOARD_OWNER.equals(appUser.getUserType())) {
-			emailDTO.setEmail(env.getProperty(NotificationConstants.DB_PROP_ADMIN_USER_EMAIL_ID));
-			emailDTO.setMessage(prepareUserRegBody(appUser.getUserName(), "", appUser.getEmail()));
-		}
-		emailDTO.setSubject(env.getProperty(NotificationConstants.DB_PROP_USER_REGI_EMAIL_SUBJECT));
-				
 		user.setIsActive(ActiveStatusEnum.INACTIVE.statusFlag());
 		user.setRoleId(userRole.getRoleId());
+		user.setPassword(NotificationUtils.encodeString(appUser.getPassword()));
 		Users savedUser = userRepo.save(user);
 		appUser.setUserId(savedUser.getUserId());
-		emailService.sendEmail(emailDTO);
+
+		List<EmailDTO> emailDTOs = new ArrayList<>();
+		emailDTOs.add(
+				new EmailDTO(appUser.getEmail(), env.getProperty(NotificationConstants.DB_PROP_USER_REGI_EMAIL_SUBJECT),
+						prepareUserRegistrationBody(appUser.getUserName(), appUser.getEmail())));
+
+		if (UserTypeEnum.MEMBER.equals(appUser.getUserType())) {
+			List<InvitationDetailsDTO> allInvitedBoardDetails = invitationsRepo
+					.getAllInvitedBoardDetails(user.getEmail());
+			for (InvitationDetailsDTO invitationDetailsDTO : allInvitedBoardDetails) {
+				invitationDetailsDTO.getBoardOwnerEmail();
+				invitationDetailsDTO.getInvitedGroupId();
+				emailDTOs.add(new EmailDTO(invitationDetailsDTO.getBoardOwnerEmail(),
+						env.getProperty(NotificationConstants.DB_PROP_BOARD_USER_REGI_EMAIL_SUBJECT),
+						prepareBoardUserRegistrationBody(user.getUserName(), invitationDetailsDTO.getInvitedGroupName())));
+				
+				groupRepo.addGroupUser(appUser.getUserId(), invitationDetailsDTO.getInvitedGroupId(),
+						appUser.getUserId(), NotificationUtils.getUKTime(), ActiveStatusEnum.INACTIVE.status());
+			}
+		} else
+
+		if (UserTypeEnum.BOARD_OWNER.equals(appUser.getUserType())) {
+		}
+
+		emailService.sendHtmlEmails(emailDTOs);
 		return appUser;
 	}
-	
+
 	@Override
 	public AppUser updateUser(AppUser appUser) {
 		if (appUser.getUserId() == null) {
@@ -105,19 +118,30 @@ public class UserServiceImpl implements UserService {
 			throw new DataNotFoundException("User " + NotificationConstants.MSG_NOT_FOUND);
 		}
 		Users dbUser = userOptional.get();
-		if (!dbUser.getEmail().equals(appUser.getEmail())) {
+		if (NotificationUtils.isValidEmail(appUser.getEmail()) && !dbUser.getEmail().equals(appUser.getEmail())) {
 			validateUser(appUser);
+			dbUser.setEmail(appUser.getEmail());
 		}
-		dbUser.setEmail(appUser.getEmail());
-		dbUser.setAlternateEmail(appUser.getAlternateEmail());
-		dbUser.setUserName(appUser.getUserName());
-		dbUser.setPassword(appUser.getPassword());
-		dbUser.setContactNumber(appUser.getContactNumber());
+		if (NotificationUtils.isValidEmail(appUser.getAlternateEmail())) {
+			dbUser.setAlternateEmail(appUser.getAlternateEmail());
+		}
+		if (appUser.getUserName() != null && !appUser.getUserName().isEmpty()) {
+			dbUser.setUserName(appUser.getUserName());
+		}
+		if (dbUser.getIsTempPwd()) {
+			dbUser.setPassword(NotificationUtils.encodeString(appUser.getPassword()));
+			dbUser.setIsTempPwd(false);
+		} else if (appUser.getPassword() != null && !appUser.getPassword().isEmpty()){
+			new InvalidRequestException("Password Cannot be updated");
+		}
+		if (appUser.getContactNumber() != null && !appUser.getContactNumber().isEmpty()) {
+			dbUser.setContactNumber(appUser.getContactNumber());
+		}
 		dbUser.setUpdatedDate(NotificationUtils.getUKTime());
 		userRepo.save(dbUser);
 		return appUser;
 	}
-	
+
 	@Override
 	public boolean deleteUser(String email) {
 		boolean status = false;
@@ -159,6 +183,21 @@ public class UserServiceImpl implements UserService {
 			throw new DataNotFoundException("User not found.");
 		}
 		return appUser;
+	}
+	
+	@Override
+	public StatusEnum approveUser(UserDTO userDTO) {
+		Users user = userRepo.findByEmail(userDTO.getEmail());
+		if (user == null) {
+			throw new DataNotFoundException("User not found.");
+		}
+		user.setIsApproved(userDTO.getIsApproved());
+		userRepo.save(user);
+		EmailDTO emailDTO = new EmailDTO(user.getEmail(),
+				env.getProperty(NotificationConstants.DB_PROP_PO_APPR_EMAIL_SUBJECT),
+				preparePOApprovalEmailBody(user.getUserName(), userDTO.getIsApproved()));
+		EmailStatusDTO sendEmailStatus = emailService.sendHtmlEmail(emailDTO);
+		return (sendEmailStatus == null ? StatusEnum.FAIL : sendEmailStatus.getStatus());
 	}
 
 	@Override
@@ -205,7 +244,7 @@ public class UserServiceImpl implements UserService {
 	public List<PermissionDTO> getRolePermission(Integer roleId) {
 		return permissionRepo.findRolePermissionsByRoleId(roleId);
 	}
-	
+
 	@Override
 	public AppUser findUserById(Integer userId) {
 		if (userId == null) {
@@ -220,14 +259,103 @@ public class UserServiceImpl implements UserService {
 		return appUser;
 	}
 	
-	private String prepareUserRegBody(String userName, String groupName, String email) {
+	@Override
+	public Integer updateGroupUser(GroupUsersDTO groupUsersDTO) {
+		Users groupUser = userRepo.findByEmail(groupUsersDTO.getUserEmail());
+		if (groupUser == null) {
+			throw new DataNotFoundException("User " + NotificationConstants.MSG_NOT_FOUND);
+		}
+
+		Groups group = groupRepo.findByGroupName(groupUsersDTO.getGroupName());
+		if (group == null) {
+			throw new DataNotFoundException("Group " + NotificationConstants.MSG_NOT_FOUND);
+		}
+		Integer updatedCount = userRepo.updateGroupUser(groupUser.getUserId(), group.getGroupId(),
+				groupUsersDTO.getIsActive() ? ActiveStatusEnum.ACTIVE.status() : ActiveStatusEnum.INACTIVE.status());
+		if (groupUsersDTO.getIsActive() && updatedCount > 0) {
+			emailService.sendHtmlEmail(new EmailDTO(groupUser.getEmail(), 
+				env.getProperty(NotificationConstants.DB_PROP_USER_APPR_SUCC_EMAIL_SUBJECT),
+				prepareUserApprovalBody(groupUser.getUserName(), group.getGroupName())));
+		}
+		return updatedCount;
+	}
+	
+	@Override
+	public StatusEnum resetPassword(String email) {
+		StatusEnum statusEnum = StatusEnum.FAIL;
+		Users user = userRepo.findByEmail(email);
+		if (user == null) {
+			throw new DataNotFoundException("User not found.");
+		}
+		String alphaNumericString = NotificationUtils.getAlphaNumericString(8);
+		EmailDTO emailDTO = new EmailDTO(user.getEmail(),
+				env.getProperty(NotificationConstants.DB_PROP_RESET_PWD_EMAIL_SUBJECT),
+				prepareResetEmailBody(user.getUserName(), alphaNumericString));
+		EmailStatusDTO emailStatusDTO = emailService.sendHtmlEmail(emailDTO);
+		if (StatusEnum.SUCCESS.equals(emailStatusDTO.getStatus())) {
+			user.setPassword(NotificationUtils.encodeString(alphaNumericString));
+			user.setIsTempPwd(true);
+			userRepo.save(user);
+			statusEnum = StatusEnum.SUCCESS;
+		}
+		return statusEnum;
+	}
+	
+	
+	private String prepareUserRegistrationBody(String userName, String email) {
 		String message = new String(env.getProperty(NotificationConstants.DB_PROP_USER_REGI_EMAIL_BODY));
-		message = message.replace(NotificationConstants.PH_BNAME, groupName)
-				.replace(NotificationConstants.PH_USER_APPR_LINK,
-						env.getProperty(NotificationConstants.DB_PROP_USER_REGI_APPR_LINK_)
-								+ NotificationUtils.encodeString(email))
-				.replace(NotificationConstants.PH_USER_NAME, userName);
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
+				NotificationConstants.PH_USER_APPR_LINK,
+				env.getProperty(NotificationConstants.DB_PROP_USER_REGI_APPR_LINK)
+						+ NotificationUtils.encodeString(email));
+		return message;
+	}
+	
+	private String prepareBoardUserRegistrationBody(String userName, String groupName) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_BOARD_USER_REGI_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(NotificationConstants.PH_BNAME,
+				groupName);
 		return message;
 	}
 
+	private String prepareUserApprovalBody(String userName, String groupName) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_USER_APPR_SUCC_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
+				NotificationConstants.PH_BNAME, groupName);
+		return message;
+	}
+	
+	private String prepareResetEmailBody(String userName, String password) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_RESET_PWD_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
+				NotificationConstants.PH_NEW_PWD, password);
+		return message;
+	}
+	
+	private String preparePOApprovalEmailBody(String userName, Boolean isApproved) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_PO_APPR_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName).replace(
+				NotificationConstants.PH_APPR_DESC, isApproved ? NotificationConstants.DESC_APPROVED : NotificationConstants.DESC_DISAPPROVED);
+		return message;
+	}
+	
+	@Override
+	public List<UserDTO> getUserDetailsRole(String roleName) {
+		if (roleName == null || roleName.isEmpty()) {
+			throw new InvalidRequestException("roleName " + NotificationConstants.MSG_NOT_NULL_EMPTY);
+		}
+		Roles userRole = rolesRepo.findByRoleName(roleName);
+		if (userRole == null) {
+			throw new DataNotFoundException("roleName " + NotificationConstants.MSG_NOT_FOUND);
+		}
+		List<Users> allUsers = userRepo.findByUserRole(userRole.getRoleId());
+		List<UserDTO> userDTOs = new ArrayList<>();
+		UserDTO userDTO;
+		for (Users tempUser : allUsers) {
+			userDTO = new UserDTO();
+			BeanUtils.copyProperties(tempUser, userDTO);
+			userDTOs.add(userDTO);
+		}
+		return userDTOs;
+	}
 }

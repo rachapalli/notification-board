@@ -11,7 +11,7 @@ import com.board.notification.model.dto.PermissionDTO;
 
 public interface PermissionRepo extends CrudRepository<Permission, Integer> {
 
-	@Query(value = "select name, is_create, is_delete, is_view, is_view from permission p, component c where p.component_id=c.component_id and p.role_id=:roleId")
+	@Query(value = "select name, is_create, is_delete, is_view, is_edit from permission p, component c where p.component_id=c.component_id and p.role_id=:roleId")
 	public List<PermissionDTO> findRolePermissionsByRoleId(@Param("roleId") Integer roleId);
 
 }

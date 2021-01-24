@@ -9,9 +9,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.board.notification.LoggingAspect;
+import com.board.notification.exception.DataNotFoundException;
 import com.board.notification.model.UserSecurityDetails;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.service.UserService;
+import com.board.notification.utils.NotificationUtils;
 
 @Service
 public class NotificationUserDetailsService implements UserDetailsService {
@@ -26,10 +28,12 @@ public class NotificationUserDetailsService implements UserDetailsService {
 		AppUser user = userServiceImpl.getUserByEmail(username);
 		if (user == null) {
 			throw new UsernameNotFoundException(String.format("No User found with username '%s'.", username));
+		} if (user.getIsActive() == null || !user.getIsActive()) {
+			throw new DataNotFoundException("Inactive User");
 		} else {
 			try {
-				return new UserSecurityDetails(user.getUserId(), user.getEmail(), user.getPassword(), user.getEmail(), null,
-						user.getPermissions());
+				return new UserSecurityDetails(user.getUserId(), user.getEmail(),
+						NotificationUtils.decodeString(user.getPassword()), user.getEmail(), null, user.getPermissions(), user.getIsTempPwd());
 			} catch (Exception e) {
 				LOGGER.error("Exception in getting user by username : ", e);
 			}

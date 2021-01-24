@@ -24,8 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.board.notification.exception.InvalidRequestException;
 import com.board.notification.model.AuthenticationRequest;
 import com.board.notification.model.AuthenticationResponse;
+import com.board.notification.model.StatusEnum;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.CommonResponse;
+import com.board.notification.model.dto.EmailDTO;
+import com.board.notification.model.dto.GroupUsersDTO;
+import com.board.notification.model.dto.UserDTO;
 import com.board.notification.service.UserService;
 import com.board.notification.service.impl.NotificationUserDetailsService;
 import com.board.notification.utils.NotificationConstants;
@@ -55,7 +59,7 @@ public class UserController {
 	}
 
 	@PostMapping("/update")
-	public ResponseEntity<CommonResponse> updateUser(@Valid @RequestBody AppUser appUser) {
+	public ResponseEntity<CommonResponse> updateUser(@RequestBody AppUser appUser) {
 		AppUser updatedUser = userService.updateUser(appUser);
 		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_UPDATE_SUCCESS, updatedUser));
 	}
@@ -75,11 +79,17 @@ public class UserController {
 	}
 
 	@PostMapping("/findUser")
-	public AppUser getUserByEmail(Map<String, String> requestMap) {
+	public AppUser getUserByEmail(@RequestBody Map<String, String> requestMap) {
 		if (requestMap == null || requestMap.isEmpty() || requestMap.get(NotificationConstants.KEY_EMAIL) == null) {
 			throw new InvalidRequestException(NotificationConstants.REQUIRED_MSG + NotificationConstants.KEY_EMAIL);
 		}
 		return userService.getUserByEmail(requestMap.get(NotificationConstants.KEY_EMAIL));
+	}
+	
+	@PostMapping("/approveUser")
+	public ResponseEntity<CommonResponse> approveUser(@Valid @RequestBody UserDTO userDTO) {
+		return ResponseEntity
+				.ok(new CommonResponse(NotificationConstants.MSG_APPROVAL_STATUS, userService.approveUser(userDTO)));
 	}
 
 	@GetMapping("/getUsers")
@@ -111,6 +121,36 @@ public class UserController {
 		final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 		final String jwt = jwtTokenUtil.generateToken(userDetails);
 		return ResponseEntity.ok(new AuthenticationResponse(jwt, "Login success", userDetails));
+	}
+
+	@PostMapping(value = "/group/approve")
+	public ResponseEntity<CommonResponse> approveGroupUser(@Valid @RequestBody GroupUsersDTO groupUsersDTO) {
+		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_UPDATE_SUCCESS,
+				userService.updateGroupUser(groupUsersDTO)));
+	}
+	
+	
+	@PostMapping(value = "/resetPassword")
+	public ResponseEntity<CommonResponse> resetPassword(@RequestBody EmailDTO emailDTO) {
+		if (emailDTO == null || emailDTO.getEmail() == null || emailDTO.getEmail().isEmpty()) {
+			throw new InvalidRequestException(NotificationConstants.REQUIRED_MSG + NotificationConstants.KEY_EMAIL);
+		}
+		StatusEnum resetPasswordStatus = userService.resetPassword(emailDTO.getEmail());
+		if (StatusEnum.SUCCESS.equals(resetPasswordStatus)) {
+			return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_PWD_RESET_SUCCESS, resetPasswordStatus));
+		} else {
+			return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_PWD_RESET_FAIL, resetPasswordStatus));
+		}
+	}
+	
+	@PostMapping("/getUserDetailsByRole")
+	public List<UserDTO> getApp(@RequestBody Map<String, String> userInput) {
+		if (userInput == null || userInput.isEmpty() || userInput.get(NotificationConstants.KEY_ROLE_NAME) == null
+				|| userInput.get(NotificationConstants.KEY_ROLE_NAME).isEmpty()) {
+			throw new InvalidRequestException(
+					NotificationConstants.KEY_ROLE_NAME + NotificationConstants.MSG_NOT_NULL_EMPTY);
+		}
+		return userService.getUserDetailsRole(userInput.get(NotificationConstants.KEY_ROLE_NAME));
 	}
 
 }

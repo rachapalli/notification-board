@@ -19,7 +19,7 @@ public class AppUser {
 	private String password;
 
 	@NotBlank(message = "Email is mandatory")
-	@Email(message = "Invalid Email Id")
+	@Email(regexp = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$", message = "Invalid email")
 	private String email;
 
 	private String alternateEmail;
@@ -30,13 +30,13 @@ public class AppUser {
 	@NotNull(message = "User Type is mandatory")
 	private UserTypeEnum userType;
 
-	private String groupName;
-
 	private Date createdDate;
 	private Date updatedDate;
 
 	private List<PermissionDTO> permissions;
 	private Boolean isActive;
+	private Boolean isTempPwd;
+	private Boolean isApproved;
 
 	public Integer getUserId() {
 		return userId;
@@ -94,14 +94,6 @@ public class AppUser {
 		this.userType = userType;
 	}
 
-	public String getGroupName() {
-		return groupName;
-	}
-
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -134,22 +126,32 @@ public class AppUser {
 		this.isActive = isActive;
 	}
 
-    public String getAuthorities() {
-        return null;
-    }
-    
+	public String getAuthorities() {
+		return null;
+	}
+
+	public Boolean getIsTempPwd() {
+		return isTempPwd;
+	}
+
+	public void setIsTempPwd(Boolean isTempPwd) {
+		this.isTempPwd = isTempPwd;
+	}
+
+	public Boolean getIsApproved() {
+		return isApproved;
+	}
+
+	public void setIsApproved(Boolean isApproved) {
+		this.isApproved = isApproved;
+	}
+
 	@Override
 	public String toString() {
 		return "AppUser [userId=" + userId + ", userName=" + userName + ", password=" + password + ", email=" + email
 				+ ", alternateEmail=" + alternateEmail + ", contactNumber=" + contactNumber + ", userType=" + userType
-				+ ", groupName=" + groupName + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate
-				+ ", permissions=" + permissions + ", isActive=" + isActive + ", getUserId()=" + getUserId()
-				+ ", getUserName()=" + getUserName() + ", getPassword()=" + getPassword() + ", getEmail()=" + getEmail()
-				+ ", getAlternateEmail()=" + getAlternateEmail() + ", getContactNumber()=" + getContactNumber()
-				+ ", getUserType()=" + getUserType() + ", getGroupName()=" + getGroupName() + ", getCreatedDate()="
-				+ getCreatedDate() + ", getUpdatedDate()=" + getUpdatedDate() + ", getPermissions()=" + getPermissions()
-				+ ", getIsActive()=" + getIsActive() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ ", toString()=" + super.toString() + "]";
+				+ ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", permissions=" + permissions
+				+ ", isActive=" + isActive + ", isTempPwd=" + isTempPwd + ", isApproved=" + isApproved + "]";
 	}
 
 }

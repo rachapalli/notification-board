@@ -11,6 +11,7 @@ public class Groups {
 	private Integer createdBy;
 	private Date createdDate;
 	private Boolean isActive;
+	private Boolean isApproved;
 
 	public Groups() {
 	}
@@ -77,6 +78,14 @@ public class Groups {
 
 	public void setCreatedBy(Integer createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	public Boolean getIsApproved() {
+		return isApproved;
+	}
+
+	public void setIsApproved(Boolean isApproved) {
+		this.isApproved = isApproved;
 	}
 
 }

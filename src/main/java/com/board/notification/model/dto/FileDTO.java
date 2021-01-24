@@ -7,23 +7,27 @@ import javax.validation.constraints.NotNull;
 public class FileDTO {
 	@NotNull(message = "File Id can not be null")
 	private Integer fileId;
-	private String name;
 	private String fileKey;
 	private Integer createdBy;
 	private Date createdDate;
 
-	public FileDTO(String fileKey, String name, Integer createdBy, Date createdDate) {
+	public FileDTO(String fileKey, Integer createdBy, Date createdDate) {
 		super();
 		this.fileKey = fileKey;
-		this.name = name;
 		this.createdBy = createdBy;
 		this.createdDate = createdDate;
 	}
-	
+
+	public FileDTO(String fileKey, Date createdDate) {
+		super();
+		this.fileKey = fileKey;
+		this.createdDate = createdDate;
+	}
+
 	public FileDTO() {
 		super();
 	}
-	
+
 	public FileDTO(Integer fileId, String fileKey, Integer createdBy, Date createdDate) {
 		super();
 		this.fileId = fileId;
@@ -64,18 +68,10 @@ public class FileDTO {
 		this.createdDate = createdDate;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	@Override
 	public String toString() {
-		return "FileDTO [fileId=" + fileId + ", name=" + name + ", fileKey=" + fileKey + ", createdBy=" + createdBy
-				+ ", createdDate=" + createdDate + "]";
+		return "FileDTO [fileId=" + fileId + ", fileKey=" + fileKey + ", createdBy=" + createdBy + ", createdDate="
+				+ createdDate + "]";
 	}
 
 }

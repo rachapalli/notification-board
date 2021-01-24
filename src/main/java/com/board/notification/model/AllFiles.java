@@ -8,7 +8,6 @@ public class AllFiles {
 
 	@Id
 	private Integer fileId;
-	private String name;
 	private String fileKey;
 	private Integer createdBy;
 	private Date createdDate;
@@ -17,9 +16,8 @@ public class AllFiles {
 		super();
 	}
 
-	public AllFiles(String name, String fileKey, Integer createdBy, Date createdDate) {
+	public AllFiles(String fileKey, Integer createdBy, Date createdDate) {
 		super();
-		this.name = name;
 		this.fileKey = fileKey;
 		this.createdBy = createdBy;
 		this.createdDate = createdDate;
@@ -31,14 +29,6 @@ public class AllFiles {
 
 	public void setFileId(Integer fileId) {
 		this.fileId = fileId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getFileKey() {
