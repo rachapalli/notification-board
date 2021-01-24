@@ -1,5 +1,6 @@
 package com.board.notification.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -174,10 +175,10 @@ public class NotificationServiceImpl implements NotificationService {
 		if (user == null) {
 			throw new DataNotFoundException(NotificationConstants.INVALID_USER_EMAIL);
 		}
-		List<GroupNotificationDTO> groupUserNotifications = null;
+		List<GroupNotificationDTO> groupUserNotifications = Collections.emptyList() ;
 		if (UserTypeEnum.MEMBER.equals(user.getUserType())) {
 			groupUserNotifications = getUserGroupNotifications(groupNotificationSearchDTO, user.getUserId());
-		} else {
+		} if (UserTypeEnum.BOARD_OWNER.equals(user.getUserType()) && user.getIsApproved()) {
 			groupUserNotifications = getUserCreatedGroupNotifications(groupNotificationSearchDTO, user.getUserId());
 		}
 		return groupUserNotifications;

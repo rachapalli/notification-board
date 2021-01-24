@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.board.notification.exception.InvalidRequestException;
+import com.board.notification.model.StatusEnum;
 import com.board.notification.model.dto.CommonResponse;
 import com.board.notification.model.dto.GroupDTO;
 import com.board.notification.model.dto.GroupUsersDTO;
@@ -76,7 +77,9 @@ public class GroupController {
 	
 	@PostMapping("/approve")
 	public ResponseEntity<CommonResponse> approveGroup(@RequestBody GroupDTO group) {
-		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_APPROVAL_STATUS, groupService.approveGroup(group)));
+		StatusEnum status = groupService.approveGroup(group);
+		return ResponseEntity.ok(new CommonResponse((group.getIsApproved() ? NotificationConstants.MSG_APPR_SUCCESS
+				: NotificationConstants.MSG_DCLINE_SUCCESS), status));
 	}
 
 }

@@ -35,4 +35,6 @@ public interface UserService {
 	List<UserDTO> getUserDetailsRole(String roleName);
 
 	StatusEnum approveUser(UserDTO userDTO);
+
+	boolean isProductOwner(String userEmail);
 }

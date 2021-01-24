@@ -19,7 +19,6 @@ import com.board.notification.model.Groups;
 import com.board.notification.model.StatusEnum;
 import com.board.notification.model.Users;
 import com.board.notification.model.dto.EmailDTO;
-import com.board.notification.model.dto.EmailStatusDTO;
 import com.board.notification.model.dto.GroupDTO;
 import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.model.dto.NotificationConverter;
@@ -130,8 +129,8 @@ public class GroupServiceImpl implements GroupService {
 			EmailDTO emailDTO = new EmailDTO(boardOwner.getEmail(),
 					env.getProperty(NotificationConstants.DB_PROP_PO_GRP_APPR_EMAIL_SUBJECT),
 					preparePOApprovalEmailBody(boardOwner.getUserName(), groupDTO.getIsApproved(), group.getGroupName()));
-			EmailStatusDTO sentEmailStatus = emailService.sendHtmlEmail(emailDTO);
-			statusEnum = sentEmailStatus == null ? statusEnum : sentEmailStatus.getStatus();
+			emailService.sendHtmlEmail(emailDTO);
+			statusEnum = StatusEnum.SUCCESS;
 		} else {
 			throw new DataNotFoundException("Board Owner" + NotificationConstants.MSG_NOT_FOUND);
 		}

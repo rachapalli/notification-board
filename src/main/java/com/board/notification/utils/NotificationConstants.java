@@ -11,16 +11,19 @@ public class NotificationConstants {
 	public static String MSG_CREATE_SUCCESS = "Created Successfully";
 	public static String MSG_UPDATE_SUCCESS = "Updated Successfully";
 	public static String MSG_DELETE_SUCCESS = "Deleted Successfully";
-	public static String MSG_APPROVAL_STATUS = "approval/Disapproval status";
+	public static String MSG_APPR_SUCCESS = "Approved Successfully";
+	public static String MSG_DCLINE_SUCCESS = "Decliened Successfully";
 	public static String MSG_PWD_RESET_SUCCESS = "Your password has been reset successfully!";
 	public static String MSG_PWD_RESET_FAIL = "An error occurred while reset password";
 	public static String MSG_NOT_NULL_EMPTY = " cannot be null or empty";
 	public static String MSG_NOT_FOUND = " not found";
 	public static String MSG_INACTIVE = " is inactive";
+	public static String MSG_BOARD_APPROVE = "Board is not in active state";
 	public static String MSG_INVALID_EMAIL = "Invalid email address";
 	public static String MSG_LOGIN_RQRD = "Login Required to access private group";
 	public static String MSG_GROUP_ACCESS = "User doesn't has access to this Group";
 	public static String MSG_EMAIL_REQUIRED = "email cannot be null or empty";
+	public static String MSG_DISAPPR_USER = "Your account is inactive, Please contact Administrator";
 	public static String INVALID_FILE_NAME = "Invalid File Name";
 	public static String INVALID_USER_EMAIL = "Invalid User Email/Not found";
 	public static String KEY_EMAIL = "email";
@@ -50,6 +53,8 @@ public class NotificationConstants {
 	public static String DB_PROP_PO_APPR_EMAIL_SUBJECT = "PO.APPR.EMAIL.SUBJECT";
 	public static String DB_PROP_PO_GRP_APPR_EMAIL_BODY = "PO.GRP.APPR.EMAIL.BODY";
 	public static String DB_PROP_PO_GRP_APPR_EMAIL_SUBJECT = "PO.GRP.APPR.EMAIL.SUBJECT";
+	public static String DB_PROP_PO_BO_REGI_EMAIL_BODY = "PO.BO.REGI.EMAIL.BODY";
+	public static String DB_PROP_PO_BO_REGI_EMAIL_SUBJECT = "PO.BO.REGI..EMAIL.SUBJECT";
 	
 	
 	public static String ALPHANUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz"; 
