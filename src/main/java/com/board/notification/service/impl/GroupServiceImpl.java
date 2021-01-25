@@ -52,6 +52,7 @@ public class GroupServiceImpl implements GroupService {
 		validateGroup(groupDTO);
 		groupDTO.setCreatedDate(NotificationUtils.getUKTime());
 		groupDTO.setIsActive(ActiveStatusEnum.ACTIVE.statusFlag());
+		groupDTO.setIsApproved(ActiveStatusEnum.INACTIVE.statusFlag());
 		Groups groups = new Groups();
 		BeanUtils.copyProperties(groupDTO, groups);
 		createdGroup = groupRepo.save(groups);
