@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum UserTypeEnum {
-	ADMIN("Admin"), BOARD_OWNER("Board Owner"), MEMBER("Member");
+	ADMIN("Admin"), BOARD_OWNER("Board Owner"), MEMBER("Member"), PRODUCT_OWNER("Product Owner");
 
 	private String userType;
 

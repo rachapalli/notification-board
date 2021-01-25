@@ -88,8 +88,8 @@ public class UserController {
 	
 	@PostMapping("/approveUser")
 	public ResponseEntity<CommonResponse> approveUser(@Valid @RequestBody UserDTO userDTO) {
-		return ResponseEntity
-				.ok(new CommonResponse(NotificationConstants.MSG_APPROVAL_STATUS, userService.approveUser(userDTO)));
+		return ResponseEntity.ok(new CommonResponse((userDTO.getIsApproved() ? NotificationConstants.MSG_APPR_SUCCESS
+				: NotificationConstants.MSG_DCLINE_SUCCESS), userService.approveUser(userDTO)));
 	}
 
 	@GetMapping("/getUsers")

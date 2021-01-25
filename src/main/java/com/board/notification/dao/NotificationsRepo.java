@@ -23,44 +23,46 @@ public interface NotificationsRepo extends CrudRepository<Notifications, Integer
 	public void saveGroupNotification(@Param("groupId") Integer groupId,
 			@Param("notificationId") Integer notificationId, @Param("createdBy") Integer createdBy, @Param("createdDate") Date createdDate);
 	
-	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, all_files af, group_notifications gn, groups gp where ns.file_id = af.file_id and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and gn.group_id=:groupId")
+	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, all_files af, group_notifications gn, groups gp where ns.file_id = af.file_id and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and gp.is_approved=1 and gn.group_id=:groupId")
 	public List<FileGroupNotification> getFileGroupNotifications(@Param("groupId") Integer groupId);
 	
-	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, nm.MESSAGE_ID, nm.MESSAGE, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, NOTIFICATION_MESSAGE nm, group_notifications gn, groups gp where ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and gn.group_id=:groupId")
+	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, nm.MESSAGE_ID, nm.MESSAGE, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, NOTIFICATION_MESSAGE nm, group_notifications gn, groups gp where ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and gp.is_approved=1 and gn.group_id=:groupId")
 	public List<MessageGroupNotification> getMessageGroupNotifications(@Param("groupId") Integer groupId);
 	
-	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, all_files af, group_notifications gn, groups gp where ns.file_id = af.file_id and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and ns.created_by=:userId")
+	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, all_files af, group_notifications gn, groups gp where ns.file_id = af.file_id and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and and gp.is_approved=1 ns.created_by=:userId")
 	public List<FileGroupNotification> getUserCreatedFileGroupNotifications(@Param("userId") Integer userId);
 	
 	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active "
 			+ "from notifications ns, all_files af, group_notifications gn, groups gp "
-			+ "where ns.file_id = af.file_id and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and ns.created_by=:userId and gp.group_name=:groupName")
+			+ "where ns.file_id = af.file_id and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and gp.is_approved=1 and ns.created_by=:userId and gp.group_name=:groupName")
 	public List<FileGroupNotification> getUserCreatedFileGroupNotificationsByGroup(@Param("userId") Integer userId, @Param("groupName") String groupName);
 	
-	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, nm.MESSAGE_ID, nm.MESSAGE, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, NOTIFICATION_MESSAGE nm, group_notifications gn, groups gp where ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and ns.created_by=:userId")
+	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, nm.MESSAGE_ID, nm.MESSAGE, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, NOTIFICATION_MESSAGE nm, group_notifications gn, groups gp where ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and gp.is_approved=1 and ns.created_by=:userId")
 	public List<MessageGroupNotification> getUserCreatedMessageGroupNotifications(@Param("userId") Integer userId);
 	
 	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, nm.MESSAGE_ID, nm.MESSAGE, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active "
 			+ "from notifications ns, NOTIFICATION_MESSAGE nm, group_notifications gn, groups gp "
-			+ "where ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and ns.created_by=:userId and gp.group_name=:groupName")
+			+ "where ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and gp.is_approved=1 and ns.created_by=:userId and gp.group_name=:groupName")
 	public List<MessageGroupNotification> getUserCreatedMessageGroupNotificationsByGroup(@Param("userId") Integer userId, @Param("groupName") String groupName);
 	
-	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, g.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, all_files af, group_notifications gn,user_groups ug, groups g where "
-			+ "ns.file_id = af.file_id and gn.notification_id=ns.notification_id and g.group_id=gn.group_id and ug.group_id=g.group_id and ug.is_active=1 and g.is_active=1 and ug.user_id=:userId")
+	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, g.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active "
+			+ "from notifications ns, all_files af, group_notifications gn,user_groups ug, groups g, users u where "
+			+ "ns.file_id = af.file_id and gn.notification_id=ns.notification_id and g.group_id=gn.group_id and ug.group_id=g.group_id and ug.is_active=1 and g.is_active=1 and g.is_approved=1 and u.user_id = g.created_by and u.is_approved=1 and ug.user_id=:userId")
 	public List<FileGroupNotification> getUserFileGroupNotifications(@Param("userId") Integer userId);
 	
 	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, g.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active "
-			+ "from notifications ns, all_files af, group_notifications gn,user_groups ug, groups g where "
-			+ "ns.file_id = af.file_id and gn.notification_id=ns.notification_id and g.group_id=gn.group_id and ug.group_id=g.group_id and ug.is_active=1 and g.is_active=1 and ug.user_id=:userId and g.group_name=:groupName")
+			+ "from notifications ns, all_files af, group_notifications gn,user_groups ug, groups g, users u where "
+			+ "ns.file_id = af.file_id and gn.notification_id=ns.notification_id and g.group_id=gn.group_id and ug.group_id=g.group_id and ug.is_active=1 and g.is_active=1 and g.is_approved=1 and u.user_id = g.created_by and u.is_approved=1 and ug.user_id=:userId and g.group_name=:groupName")
 	public List<FileGroupNotification> getUserFileGroupNotificationsByGroup(@Param("userId") Integer userId, @Param("groupName") String groupName);
 	
-	@Query(value = "select ns.notification_id,ns.DESCRIPTION,ns.ntype, nm.MESSAGE_ID, nm.MESSAGE, gn.group_id, g.group_name,ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from user_groups ug, groups g, notifications ns, NOTIFICATION_MESSAGE nm, group_notifications gn  where "
-			+ "ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and g.group_id=gn.group_id and ug.group_id=g.group_id and ug.is_active=1 and g.is_active=1 and ug.user_id=:userId")
+	@Query(value = "select ns.notification_id,ns.DESCRIPTION,ns.ntype, nm.MESSAGE_ID, nm.MESSAGE, gn.group_id, g.group_name,ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active "
+			+ "from user_groups ug, groups g, notifications ns, NOTIFICATION_MESSAGE nm, group_notifications gn, users u  where "
+			+ "ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and g.group_id=gn.group_id and ug.group_id=g.group_id and ug.is_active=1 and g.is_active=1 and g.is_approved=1 and u.user_id = g.created_by and u.is_approved=1 and ug.user_id=:userId")
 	public List<MessageGroupNotification> getUserMessageGroupNotifications(@Param("userId") Integer userId);
 	
 	@Query(value = "select ns.notification_id,ns.DESCRIPTION,ns.ntype, nm.MESSAGE_ID, nm.MESSAGE, gn.group_id, g.group_name,ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active "
-			+ "from user_groups ug, groups g, notifications ns, NOTIFICATION_MESSAGE nm, group_notifications gn  where "
-			+ "ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and g.group_id=gn.group_id and ug.group_id=g.group_id and ug.is_active=1 and g.is_active=1 and ug.user_id=:userId and g.group_name=:groupName")
+			+ "from user_groups ug, groups g, notifications ns, NOTIFICATION_MESSAGE nm, group_notifications gn, users u where "
+			+ "ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and g.group_id=gn.group_id and ug.group_id=g.group_id and u.user_id = g.created_by and u.is_approved=1 and ug.is_active=1 and g.is_active=1 and g.is_approved=1 and ug.user_id=:userId and g.group_name=:groupName")
 	public List<MessageGroupNotification> getUserMessageGroupNotificationsByGroup(@Param("userId") Integer userId, @Param("groupName") String groupName);
 	
 	@Modifying

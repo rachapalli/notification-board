@@ -222,19 +222,30 @@ INSERT INTO APP_PROPERTIES values ('USER.APPR.SUCC.EMAIL.SUBJECT', 'Board Approv
 
 alter table users add is_temp_pwd BIT DEFAULT 0;
 
-INSERT into APP_PROPERTIES VALUES('RESET.PWD.EMAIL.SUBJECT', 'Reset Password');
+INSERT into APP_PROPERTIES VALUES('RESET.PWD.EMAIL.SUBJECT', 'Forgot Password');
 INSERT into APP_PROPERTIES VALUES('RESET.PWD.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> You recently requested to reset password.</p><p>Your temporay password to login is : <<NEW_PWD>></p>');
 
 INSERT INTO roles (role_name, created_by, created_date, is_active) values ('Product Owner',1,GETDATE(),1);
 
-INSERT INTO users(user_name,password,email,contact_number,is_active)
-VALUES('Product Owner', 'TkJAMjAyMA==', 'notificationboard31@gmail.com','9874563210', 1 );
-
 alter table users add is_approved BIT DEFAULT 0;
 alter table groups add is_approved BIT DEFAULT 0;
+
+INSERT INTO users(user_name,password,email,contact_number,is_active, role_id, is_approved)
+VALUES('Product Owner', 'TkJAMjAyMA==', 'notificationboard31@gmail.com','9874563210', 1, (select role_id from roles where role_name='Product Owner'), 1 );
 
 INSERT into APP_PROPERTIES VALUES('PO.APPR.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> Your account is <<APPR_DESC>></p>');
 INSERT into APP_PROPERTIES VALUES('PO.APPR.EMAIL.SUBJECT', 'Approval Response');
 
 INSERT into APP_PROPERTIES VALUES('PO.GRP.APPR.EMAIL.BODY', '<p>Hi <<USER_NAME>>, </p><p> Your Board <<BNAME>> is <<APPR_DESC>></p>');
 INSERT into APP_PROPERTIES VALUES('PO.GRP.APPR.EMAIL.SUBJECT', 'Board Approval Response');
+
+INSERT into APP_PROPERTIES VALUES('PO.BO.REGI.EMAIL.BODY', '<p>Hi , </p><p>New Board Owner : <<USER_NAME>> is registered</p>');
+INSERT into APP_PROPERTIES VALUES('PO.BO.REGI..EMAIL.SUBJECT', 'New User Registration');
+
+insert into component (name) values ('ALL_USERS');
+insert into component (name) values ('ALL_BOARD_OWNERS');
+insert into component (name) values ('ALL_BOARDS');
+
+insert into permission (role_id, component_id, is_create, is_edit,is_view, is_delete) values (6, 10, 0, 1, 1, 0);
+insert into permission (role_id, component_id, is_create, is_edit,is_view, is_delete) values (6, 11, 0, 1, 1, 0);
+insert into permission (role_id, component_id, is_create, is_edit,is_view, is_delete) values (6, 12, 0, 1, 1, 0);
