@@ -29,7 +29,7 @@ public interface NotificationsRepo extends CrudRepository<Notifications, Integer
 	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, nm.MESSAGE_ID, nm.MESSAGE, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, NOTIFICATION_MESSAGE nm, group_notifications gn, groups gp where ns.MESSAGE_ID = nm.MESSAGE_ID and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and gp.is_approved=1 and gn.group_id=:groupId")
 	public List<MessageGroupNotification> getMessageGroupNotifications(@Param("groupId") Integer groupId);
 	
-	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, all_files af, group_notifications gn, groups gp where ns.file_id = af.file_id and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and and gp.is_approved=1 ns.created_by=:userId")
+	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active from notifications ns, all_files af, group_notifications gn, groups gp where ns.file_id = af.file_id and gn.notification_id=ns.notification_id and gp.group_id=gn.group_id and gp.is_approved=1 ns.created_by=:userId")
 	public List<FileGroupNotification> getUserCreatedFileGroupNotifications(@Param("userId") Integer userId);
 	
 	@Query(value = "select ns.notification_id, ns.DESCRIPTION, ns.ntype, af.file_id, af.file_key, gn.group_id, gp.group_name, ns.created_by, ns.created_date, ns.updated_by, ns.updated_date, gn.is_active "

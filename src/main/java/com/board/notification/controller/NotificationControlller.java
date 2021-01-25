@@ -53,7 +53,7 @@ public class NotificationControlller {
 			return new ResponseEntity<>(new CommonResponse("Group " + groupName + NotificationConstants.MSG_NOT_FOUND), HttpStatus.NOT_FOUND);
 		} else if (!groupDTO.getIsActive()) {
 			return new ResponseEntity<>(new CommonResponse("Group " + groupName + NotificationConstants.MSG_INACTIVE), HttpStatus.FORBIDDEN);
-		} else if (!groupDTO.getIsApproved()) {
+		} else if (groupDTO.getIsApproved() == null || !groupDTO.getIsApproved()) {
 			return new ResponseEntity<>(new CommonResponse(NotificationConstants.MSG_BOARD_APPROVE), HttpStatus.FORBIDDEN);
 		}
 		
