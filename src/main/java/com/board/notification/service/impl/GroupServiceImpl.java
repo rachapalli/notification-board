@@ -70,6 +70,12 @@ public class GroupServiceImpl implements GroupService {
 		if (groupDTO.getGroupId() == null) {
 			throw new InvalidRequestException("To update group GroupId" + NotificationConstants.MSG_NOT_NULL_EMPTY);
 		}
+		if (groupDTO.getIsPublic() == null) {
+			throw new InvalidRequestException("isPublic cannot be null");
+		}
+		if (groupDTO.getGroupName() == null || groupDTO.getGroupName().isEmpty()) {
+			throw new InvalidRequestException("Group Name cannot be null or empty");
+		}
 		Optional<Groups> groupOptional = groupRepo.findById(groupDTO.getGroupId());
 		if (groupOptional.isPresent()) {
 			Groups groups = groupOptional.get();
@@ -78,6 +84,7 @@ public class GroupServiceImpl implements GroupService {
 			}
 			groups.setGroupName(groupDTO.getGroupName());
 			groups.setIsPublic(groupDTO.getIsPublic());
+			groups.setIsActive(ActiveStatusEnum.ACTIVE.statusFlag());
 			Groups savedGroup = groupRepo.save(groups);
 			groupDTO.setCreatedDate(savedGroup.getCreatedDate());
 			groupDTO.setCreatedBy(savedGroup.getCreatedBy());
@@ -147,7 +154,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public List<GroupDTO> getAllGroups() {
-		return NotificationConverter.toGroupDTOs(groupRepo.findAll());
+		return groupRepo.getAllGroups();
 	}
 
 	@Override

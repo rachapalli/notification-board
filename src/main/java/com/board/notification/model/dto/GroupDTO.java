@@ -17,6 +17,8 @@ public class GroupDTO {
 	@NotNull(message = "createdBy cannot be null")
 	private Integer createdBy;
 
+	private String createdUserName;
+
 	private Date createdDate;
 	private Boolean isActive;
 	private Boolean isApproved;
@@ -95,11 +97,19 @@ public class GroupDTO {
 		this.isApproved = isApproved;
 	}
 
+	public String getCreatedUserName() {
+		return createdUserName;
+	}
+
+	public void setCreatedUserName(String createdUserName) {
+		this.createdUserName = createdUserName;
+	}
+
 	@Override
 	public String toString() {
 		return "GroupDTO [groupId=" + groupId + ", groupName=" + groupName + ", isPublic=" + isPublic + ", createdBy="
-				+ createdBy + ", createdDate=" + createdDate + ", isActive=" + isActive + ", isApproved=" + isApproved
-				+ "]";
+				+ createdBy + ", createdUserName=" + createdUserName + ", createdDate=" + createdDate + ", isActive="
+				+ isActive + ", isApproved=" + isApproved + "]";
 	}
 
 }
