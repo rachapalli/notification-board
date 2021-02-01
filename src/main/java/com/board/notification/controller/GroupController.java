@@ -36,7 +36,7 @@ public class GroupController {
 	}
 
 	@PostMapping("/update")
-	public ResponseEntity<?> updateGroup(@Valid @RequestBody GroupDTO group) {
+	public ResponseEntity<?> updateGroup(@RequestBody GroupDTO group) {
 		GroupDTO updatedGroup = groupService.updateGroup(group);
 		return ResponseEntity.ok(new CommonResponse(NotificationConstants.MSG_UPDATE_SUCCESS, updatedGroup));
 	}

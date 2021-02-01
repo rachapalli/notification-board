@@ -37,7 +37,7 @@ public class NotificationConstants {
 	public static String PH_USER_APPR_LINK = "<<USER_APPR_LINK>>";
 	public static String PH_APPR_DESC = "<<APPR_DESC>>";
 	public static String DESC_APPROVED = "approved";
-	public static String DESC_DISAPPROVED = "disapproved";
+	public static String DESC_DISAPPROVED = "declined";
 	public static String EMAIL_PATTERN = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
 	public static String DB_PROP_ADMIN_USER_EMAIL_ID = "ADMIN.USER.EMAIL.ID";
 	public static String DB_PROP_USER_REGI_APPR_LINK = "USER.REGI.APPR.LINK";
