@@ -18,7 +18,7 @@ public class NotificationConstants {
 	public static String MSG_NOT_NULL_EMPTY = " cannot be null or empty";
 	public static String MSG_NOT_FOUND = " not found";
 	public static String MSG_INACTIVE = " is inactive";
-	public static String MSG_BOARD_APPROVE = "Board is not in active state";
+	public static String MSG_BOARD_APPROVE = "Board is not approved";
 	public static String MSG_INVALID_EMAIL = "Invalid email address";
 	public static String MSG_LOGIN_RQRD = "Login Required to access private group";
 	public static String MSG_GROUP_ACCESS = "User doesn't has access to this Group";

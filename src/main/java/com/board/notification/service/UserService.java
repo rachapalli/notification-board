@@ -3,6 +3,7 @@ package com.board.notification.service;
 import java.util.List;
 
 import com.board.notification.model.StatusEnum;
+import com.board.notification.model.UserTypeEnum;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.model.dto.PermissionDTO;
@@ -36,5 +37,5 @@ public interface UserService {
 
 	StatusEnum approveUser(UserDTO userDTO);
 
-	boolean isProductOwner(String userEmail);
+	UserTypeEnum getUserRole(String userEmail);
 }
