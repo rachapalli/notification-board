@@ -368,7 +368,12 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public boolean isProductOwner(String userEmail) {
-		return  UserTypeEnum.PRODUCT_OWNER.getUserType().equals(userRepo.getUserRoleNameByEmail(userEmail));
+	public UserTypeEnum getUserRole(String userEmail) {
+		UserTypeEnum userRole = null;
+		String userRoleName = userRepo.getUserRoleNameByEmail(userEmail);
+		if (userRoleName != null && !userRoleName.isEmpty()) {
+			return UserTypeEnum.decode(userRoleName);
+		}
+		return userRole;
 	}
 }
