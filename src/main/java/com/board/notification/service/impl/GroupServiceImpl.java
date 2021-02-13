@@ -19,7 +19,6 @@ import com.board.notification.model.Groups;
 import com.board.notification.model.StatusEnum;
 import com.board.notification.model.Users;
 import com.board.notification.model.dto.EmailDTO;
-import com.board.notification.model.dto.EmailStatusDTO;
 import com.board.notification.model.dto.GroupDTO;
 import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.model.dto.NotificationConverter;
@@ -53,6 +52,7 @@ public class GroupServiceImpl implements GroupService {
 		validateGroup(groupDTO);
 		groupDTO.setCreatedDate(NotificationUtils.getUKTime());
 		groupDTO.setIsActive(ActiveStatusEnum.ACTIVE.statusFlag());
+		groupDTO.setIsApproved(ActiveStatusEnum.INACTIVE.statusFlag());
 		Groups groups = new Groups();
 		BeanUtils.copyProperties(groupDTO, groups);
 		createdGroup = groupRepo.save(groups);
@@ -70,6 +70,12 @@ public class GroupServiceImpl implements GroupService {
 		if (groupDTO.getGroupId() == null) {
 			throw new InvalidRequestException("To update group GroupId" + NotificationConstants.MSG_NOT_NULL_EMPTY);
 		}
+		if (groupDTO.getIsPublic() == null) {
+			throw new InvalidRequestException("isPublic cannot be null");
+		}
+		if (groupDTO.getGroupName() == null || groupDTO.getGroupName().isEmpty()) {
+			throw new InvalidRequestException("Group Name cannot be null or empty");
+		}
 		Optional<Groups> groupOptional = groupRepo.findById(groupDTO.getGroupId());
 		if (groupOptional.isPresent()) {
 			Groups groups = groupOptional.get();
@@ -78,6 +84,7 @@ public class GroupServiceImpl implements GroupService {
 			}
 			groups.setGroupName(groupDTO.getGroupName());
 			groups.setIsPublic(groupDTO.getIsPublic());
+			groups.setIsActive(ActiveStatusEnum.ACTIVE.statusFlag());
 			Groups savedGroup = groupRepo.save(groups);
 			groupDTO.setCreatedDate(savedGroup.getCreatedDate());
 			groupDTO.setCreatedBy(savedGroup.getCreatedBy());
@@ -130,8 +137,8 @@ public class GroupServiceImpl implements GroupService {
 			EmailDTO emailDTO = new EmailDTO(boardOwner.getEmail(),
 					env.getProperty(NotificationConstants.DB_PROP_PO_GRP_APPR_EMAIL_SUBJECT),
 					preparePOApprovalEmailBody(boardOwner.getUserName(), groupDTO.getIsApproved(), group.getGroupName()));
-			EmailStatusDTO sentEmailStatus = emailService.sendHtmlEmail(emailDTO);
-			statusEnum = sentEmailStatus == null ? statusEnum : sentEmailStatus.getStatus();
+			emailService.sendHtmlEmail(emailDTO);
+			statusEnum = StatusEnum.SUCCESS;
 		} else {
 			throw new DataNotFoundException("Board Owner" + NotificationConstants.MSG_NOT_FOUND);
 		}
@@ -147,7 +154,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public List<GroupDTO> getAllGroups() {
-		return NotificationConverter.toGroupDTOs(groupRepo.findAll());
+		return groupRepo.getAllGroups();
 	}
 
 	@Override

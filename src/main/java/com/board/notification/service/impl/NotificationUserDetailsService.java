@@ -13,6 +13,7 @@ import com.board.notification.exception.DataNotFoundException;
 import com.board.notification.model.UserSecurityDetails;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.service.UserService;
+import com.board.notification.utils.NotificationConstants;
 import com.board.notification.utils.NotificationUtils;
 
 @Service
@@ -30,6 +31,8 @@ public class NotificationUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException(String.format("No User found with username '%s'.", username));
 		} if (user.getIsActive() == null || !user.getIsActive()) {
 			throw new DataNotFoundException("Inactive User");
+		} if (user.getIsApproved() == null || !user.getIsApproved()) {
+			throw new DataNotFoundException(NotificationConstants.MSG_DISAPPR_USER);
 		} else {
 			try {
 				return new UserSecurityDetails(user.getUserId(), user.getEmail(),

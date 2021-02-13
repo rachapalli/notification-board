@@ -102,6 +102,8 @@ public class UserServiceImpl implements UserService {
 		} else
 
 		if (UserTypeEnum.BOARD_OWNER.equals(appUser.getUserType())) {
+			emailDTOs.add(new EmailDTO(userRepo.getProductOwnerEmail(), env.getProperty(NotificationConstants.DB_PROP_PO_BO_REGI_EMAIL_SUBJECT),
+			prepareUserBORegistrtoinEmailBody(user.getUserName())));
 		}
 
 		emailService.sendHtmlEmails(emailDTOs);
@@ -196,8 +198,8 @@ public class UserServiceImpl implements UserService {
 		EmailDTO emailDTO = new EmailDTO(user.getEmail(),
 				env.getProperty(NotificationConstants.DB_PROP_PO_APPR_EMAIL_SUBJECT),
 				preparePOApprovalEmailBody(user.getUserName(), userDTO.getIsApproved()));
-		EmailStatusDTO sendEmailStatus = emailService.sendHtmlEmail(emailDTO);
-		return (sendEmailStatus == null ? StatusEnum.FAIL : sendEmailStatus.getStatus());
+		emailService.sendHtmlEmail(emailDTO);
+		return StatusEnum.SUCCESS;
 	}
 
 	@Override
@@ -339,6 +341,12 @@ public class UserServiceImpl implements UserService {
 		return message;
 	}
 	
+	private String prepareUserBORegistrtoinEmailBody(String userName) {
+		String message = new String(env.getProperty(NotificationConstants.DB_PROP_PO_BO_REGI_EMAIL_BODY));
+		message = message.replace(NotificationConstants.PH_USER_NAME, userName);
+		return message;
+	}
+	
 	@Override
 	public List<UserDTO> getUserDetailsRole(String roleName) {
 		if (roleName == null || roleName.isEmpty()) {
@@ -357,5 +365,15 @@ public class UserServiceImpl implements UserService {
 			userDTOs.add(userDTO);
 		}
 		return userDTOs;
+	}
+	
+	@Override
+	public UserTypeEnum getUserRole(String userEmail) {
+		UserTypeEnum userRole = null;
+		String userRoleName = userRepo.getUserRoleNameByEmail(userEmail);
+		if (userRoleName != null && !userRoleName.isEmpty()) {
+			return UserTypeEnum.decode(userRoleName);
+		}
+		return userRole;
 	}
 }

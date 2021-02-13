@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.board.notification.model.AuthenticationResponse;
+import com.board.notification.model.UserTypeEnum;
+import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.CommonResponse;
 import com.board.notification.model.dto.DeleteGroupNotificationDTO;
 import com.board.notification.model.dto.GroupDTO;
@@ -24,6 +26,7 @@ import com.board.notification.model.dto.GroupNotificationSearchDTO;
 import com.board.notification.model.dto.NotificationDTO;
 import com.board.notification.service.GroupService;
 import com.board.notification.service.NotificationService;
+import com.board.notification.service.UserService;
 import com.board.notification.utils.NotificationConstants;
 import com.board.notification.utils.NotificationUtils;
 
@@ -36,6 +39,9 @@ public class NotificationControlller {
 	
 	@Autowired
 	private GroupService groupService;
+	
+	@Autowired
+	private UserService userService;
 
 	@GetMapping("/getNotifications/{groupName}")
 	public ResponseEntity<?> getNotifications(@PathVariable(name = "groupName") String groupName,
@@ -43,18 +49,52 @@ public class NotificationControlller {
 		GroupDTO groupDTO = groupService.getGroupByName(groupName);
 		if (groupDTO == null) {
 			return new ResponseEntity<>(new CommonResponse("Group " + groupName + NotificationConstants.MSG_NOT_FOUND), HttpStatus.NOT_FOUND);
-		} else if (!groupDTO.getIsActive()) {
-			return new ResponseEntity<>(new CommonResponse("Group " + groupName + NotificationConstants.MSG_INACTIVE), HttpStatus.FORBIDDEN);
-		}
+		} 
+		
 		if (!groupDTO.getIsPublic()) {
 			if (token == null || token.isEmpty()) {
 				return new ResponseEntity<>(new CommonResponse(NotificationConstants.MSG_LOGIN_RQRD), HttpStatus.UNAUTHORIZED);
 			}
-			String loginUser = NotificationUtils.getLoginUser();
+		}
+		
+		UserTypeEnum userRole = null;
+		String loginUser = null;
+		if (token != null && !token.isEmpty()) {
+			loginUser = NotificationUtils.getLoginUser();
+			if (loginUser != null && !loginUser.isEmpty()) {
+				userRole = userService.getUserRole(loginUser);
+			}
+		}
+		
+		boolean skipCheckGroupActiveStatus = (UserTypeEnum.BOARD_OWNER.equals(userRole) || UserTypeEnum.PRODUCT_OWNER.equals(userRole)
+				|| UserTypeEnum.ADMIN.equals(userRole));
+		
+		boolean skipCheckGroupApprovalStatus = (UserTypeEnum.PRODUCT_OWNER.equals(userRole)	|| UserTypeEnum.ADMIN.equals(userRole));
+		
+		boolean checkUserGroupAccess = !groupDTO.getIsPublic() && (UserTypeEnum.MEMBER.equals(userRole) || UserTypeEnum.BOARD_OWNER.equals(userRole));
+		
+		if (!skipCheckGroupActiveStatus) {
+			if (!groupDTO.getIsActive()) {
+				return new ResponseEntity<>(new CommonResponse("Group " + groupName + NotificationConstants.MSG_INACTIVE), HttpStatus.FORBIDDEN);
+			}
+		}
+		
+		if (!skipCheckGroupApprovalStatus) {
+			if (groupDTO.getIsApproved() == null || !groupDTO.getIsApproved()) {
+				return new ResponseEntity<>(new CommonResponse(NotificationConstants.MSG_BOARD_APPROVE), HttpStatus.FORBIDDEN);
+			}
+		}
+		
+		if (checkUserGroupAccess) {
+			AppUser boardOwner = userService.findUserById(groupDTO.getCreatedBy());
+			if (boardOwner == null || !boardOwner.getIsApproved()) {
+				return new ResponseEntity<>(new CommonResponse("Board Owner is decliened state"), HttpStatus.FORBIDDEN);
+			}
 			if (!groupService.checkUserGroupAccess(loginUser, groupDTO.getGroupId())) {
 				return new ResponseEntity<>(new CommonResponse(NotificationConstants.MSG_GROUP_ACCESS), HttpStatus.UNAUTHORIZED);
 			}
 		}
+		
 		return ResponseEntity.ok(notificationService.getGroupNotification(groupDTO.getGroupId()));
 	}
 
@@ -86,4 +126,6 @@ public class NotificationControlller {
 			@Valid @RequestBody GroupNotificationSearchDTO groupNotificationSearchDTO) {
 		return notificationService.getAllUserGroupNotifications(groupNotificationSearchDTO);
 	}
+	
+	
 }

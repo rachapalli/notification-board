@@ -3,6 +3,7 @@ package com.board.notification.service;
 import java.util.List;
 
 import com.board.notification.model.StatusEnum;
+import com.board.notification.model.UserTypeEnum;
 import com.board.notification.model.dto.AppUser;
 import com.board.notification.model.dto.GroupUsersDTO;
 import com.board.notification.model.dto.PermissionDTO;
@@ -35,4 +36,6 @@ public interface UserService {
 	List<UserDTO> getUserDetailsRole(String roleName);
 
 	StatusEnum approveUser(UserDTO userDTO);
+
+	UserTypeEnum getUserRole(String userEmail);
 }
